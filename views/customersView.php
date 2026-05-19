@@ -42,7 +42,6 @@
                 <th>Customer status</th>
                 <th>Loyalty points</th>
                 <th>Newsletter status</th>
-                <th>Notes</th>
                 <th>Created at</th>
                 <th>Last updated at</th>
             </tr>
@@ -50,14 +49,13 @@
                 <tr>
                     <td><?= htmlspecialchars($customer["first_name"]) ?> <?= htmlspecialchars($customer["last_name"]) ?></td>
                     <td><?= htmlspecialchars($customer["gender"]) ?></td>
-                    <td><?= htmlspecialchars($customer["date_of_birth"]) ?></td>
+                    <td class="text-nowrap"><?= htmlspecialchars($customer["date_of_birth"]) ?></td>
                     <td><?= htmlspecialchars($customer["email"]) ?><br><?= htmlspecialchars($customer["phone"]) ?></td>
                     <td><?= htmlspecialchars($customer["street"]) ?> <?= htmlspecialchars($customer["house_number"]) ?><br><?= htmlspecialchars($customer["postal_code"]) ?> <?= htmlspecialchars($customer["city"]) ?><br><?= htmlspecialchars($customer["country"]) ?></td>
                     <td><?= htmlspecialchars($customer["registration_date"]) ?></td>
                     <td><?= htmlspecialchars($customer["customer_status"]) ?></td>
                     <td><?= htmlspecialchars($customer["loyalty_points"]) ?></td>
-                    <td><?= htmlspecialchars($customer["newsletter_subscribed"]) ?></td>
-                    <td><?= htmlspecialchars($customer["notes"]) ?></td>
+                    <td><?= $customer["newsletter_subscribed"] == 1 ? 'Yes' : ($customer["newsletter_subscribed"] == 0 ? 'No' : htmlspecialchars($customer["newsletter_subscribed"])) ?></td>
                     <td><?= htmlspecialchars($customer["created_at"]) ?></td>
                     <td><?= htmlspecialchars($customer["updated_at"]) ?></td>
                 </tr>

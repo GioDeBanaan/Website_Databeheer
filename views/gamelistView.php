@@ -31,6 +31,9 @@
                 </li>
             </ul>
         </header>
+        <div class="container mt-4 d-flex justify-content-center" >
+            <a href="../Create/gamelistCreate.php" class="btn btn-success mb-3">Add new game</a>
+        </div>
         <table class="table table-bordered">
             <tr>
                 <th>Title</th>
