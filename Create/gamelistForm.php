@@ -24,8 +24,8 @@
         <?php
             $ratingValue = isset($game['personal_rating']) ? number_format((float)$game['personal_rating'], 1, '.', '') : '5.0';
             $ratingDisplay = str_replace('.', ',', $ratingValue);
-            $selectedGenres = isset($game['genre_id']) ? (array) $game['genre_id'] : [];
-            $selectedPlatforms = isset($game['platform_id']) ? (array) $game['platform_id'] : [];
+            $selectedGenres = isset($game['genre_ids']) ? (array) $game['genre_ids'] : [];
+            $selectedPlatforms = isset($game['platform_ids']) ? (array) $game['platform_ids'] : [];
         ?>
         <label class="form-label">Personal Rating: <span id="value"><?= $ratingDisplay ?></span></label>
         <br>
@@ -49,7 +49,7 @@
                 $stmt = $conn->prepare("SELECT genre_id, name FROM genres");
                 $stmt->execute();
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    $checked = in_array($row['genre_id'], $selectedGenres, true) ? ' checked' : '';
+                    $checked = in_array((int)$row['genre_id'], $selectedGenres, true) ? ' checked' : '';
                     echo "
                         <label>
                             <input type='checkbox' name='genres[]' value='{$row['genre_id']}'{$checked}>
@@ -67,7 +67,7 @@
                     $stmt = $conn->prepare("SELECT platform_id, name FROM platforms");
                     $stmt->execute();
                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                        $checked = in_array($row['platform_id'], $selectedPlatforms, true) ? ' checked' : '';
+                        $checked = in_array((int)$row['platform_id'], $selectedPlatforms, true) ? ' checked' : '';
                         echo "
                             <label>
                                 <input type='checkbox' name='platforms[]' value='{$row['platform_id']}'{$checked}>

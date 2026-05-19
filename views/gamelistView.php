@@ -37,7 +37,7 @@
         <table class="table table-bordered">
             <tr>
                 <th>Title</th>
-                <th>Game type</th>
+                <th>Game description</th>
                 <th>Release date</th>
                 <th>Genre</th>
                 <th>Platform</th>
@@ -53,8 +53,8 @@
                     <td><?= htmlspecialchars($game["title"]) ?></td>
                     <td><?= htmlspecialchars($game["description"]) ?></td>
                     <td><?= htmlspecialchars($game["released_at"]) ?></td>
-                    <td><?= htmlspecialchars($game["genre_name"]) ?></td>
-                    <td><?= htmlspecialchars($game["platform_name"]) ?></td>
+                    <td><?= htmlspecialchars($game["genre_names"] ?? $game["genre_name"] ?? '') ?></td>
+                    <td><?= htmlspecialchars($game["platform_names"] ?? $game["platform_name"] ?? '') ?></td>
                     <td><?= is_numeric($game["personal_rating"]) ? number_format((float)$game["personal_rating"], 1, '.', '') : htmlspecialchars($game["personal_rating"]) ?></td>
                     <td><?= htmlspecialchars($game["rawg_rating"]) ?></td>
                     <td><?= htmlspecialchars($game["created_at"]) ?></td>

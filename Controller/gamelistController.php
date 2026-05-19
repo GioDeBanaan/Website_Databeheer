@@ -35,8 +35,8 @@
                 'description' => $_POST['description'] ?? '',
                 'released_at' => $_POST['released_at'] ?? '',
                 'personal_rating' => str_replace(',', '.', $_POST['rating'] ?? '0'),
-                'genre_id' => !empty($_POST['genres']) ? (int) $_POST['genres'][0] : null,
-                'platform_id' => !empty($_POST['platforms']) ? (int) $_POST['platforms'][0] : null,
+                'genre_ids' => !empty($_POST['genres']) ? array_map('intval', $_POST['genres']) : [],
+                'platform_ids' => !empty($_POST['platforms']) ? array_map('intval', $_POST['platforms']) : [],
             ];
         }
 

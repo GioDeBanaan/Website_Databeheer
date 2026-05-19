@@ -176,6 +176,26 @@ INSERT INTO `platforms` (`platform_id`, `name`) VALUES
 
 -- --------------------------------------------------------
 
+CREATE TABLE `game_genres` (
+  `game_id` int(11) NOT NULL,
+  `genre_id` int(11) NOT NULL,
+  PRIMARY KEY (`game_id`, `genre_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `game_platforms` (
+  `game_id` int(11) NOT NULL,
+  `platform_id` int(11) NOT NULL,
+  PRIMARY KEY (`game_id`, `platform_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `game_genres` (`game_id`, `genre_id`)
+SELECT game_id, genre_id FROM games;
+
+INSERT INTO `game_platforms` (`game_id`, `platform_id`)
+SELECT game_id, platform_id FROM games;
+
+-- --------------------------------------------------------
+
 --
 -- Tabelstructuur voor tabel `suppliers`
 --
