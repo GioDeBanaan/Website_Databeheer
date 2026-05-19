@@ -8,24 +8,38 @@
 <body>
         <div class="mb-3">
             <label class="form-label">Title:</label>
-            <input type="text" name="title" placeholder="Enter game title" required>
+            <input type="text" name="title" placeholder="Enter game title" value="<?= htmlspecialchars($game['title'] ?? '') ?>" required>
         </div>
         <br>
         <div class="mb-3">
             <label class="form-label">Description:</label>
-            <input class="form-control" type="text" name="description" placeholder="Enter game description" required>
+            <input class="form-control" type="text" name="description" placeholder="Enter game description" value="<?= isset($game['description']) ? htmlspecialchars($game['description']) : '' ?>" required>
         </div>
         <br>
         <div class="mb-3">
             <label class="form-label">Release Date:</label>
-            <input type="date" name="released_at" required>
+            <input type="date" name="released_at" min="1950" max="2026" value="<?= isset($game['released_at']) ? htmlspecialchars($game['released_at']) : '' ?>" required>
         </div>
         <br>
-        <label class="form-label">Personal Rating: <span id="value">5.0</span></label>
+        <?php
+            $ratingValue = isset($game['personal_rating']) ? number_format((float)$game['personal_rating'], 1, '.', '') : '5.0';
+            $ratingDisplay = str_replace('.', ',', $ratingValue);
+            $selectedGenres = isset($game['genre_id']) ? (array) $game['genre_id'] : [];
+            $selectedPlatforms = isset($game['platform_id']) ? (array) $game['platform_id'] : [];
+        ?>
+        <label class="form-label">Personal Rating: <span id="value"><?= $ratingDisplay ?></span></label>
         <br>
-        <input type="range" id="rating" name="rating" min="1.0" max="10.0" step="0.1" value="5.0" required oninput="valueDisplay.textContent = this.value"/>
+        <input type="range" id="rating" name="rating" min="1.0" max="10.0" step="0.1" value="<?= $ratingValue ?>" required />
         <script>
             const valueDisplay = document.getElementById("value");
+            const ratingSlider = document.getElementById("rating");
+
+            function updateRatingDisplay() {
+                valueDisplay.textContent = parseFloat(ratingSlider.value).toFixed(1);
+            }
+
+            ratingSlider.addEventListener('input', updateRatingDisplay);
+            updateRatingDisplay();
         </script>
         <br>
         <div class="mb-3">
@@ -35,9 +49,10 @@
                 $stmt = $conn->prepare("SELECT genre_id, name FROM genres");
                 $stmt->execute();
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $checked = in_array($row['genre_id'], $selectedGenres, true) ? ' checked' : '';
                     echo "
                         <label>
-                            <input type='checkbox' name='genres[]' value='{$row['genre_id']}' >
+                            <input type='checkbox' name='genres[]' value='{$row['genre_id']}'{$checked}>
                             {$row['name']}
                         </label>
                     ";
@@ -52,9 +67,10 @@
                     $stmt = $conn->prepare("SELECT platform_id, name FROM platforms");
                     $stmt->execute();
                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        $checked = in_array($row['platform_id'], $selectedPlatforms, true) ? ' checked' : '';
                         echo "
                             <label>
-                                <input type='checkbox' name='platforms[]' value='{$row['platform_id']}' >
+                                <input type='checkbox' name='platforms[]' value='{$row['platform_id']}'{$checked}>
                                 {$row['name']}
                             </label>
                         ";
