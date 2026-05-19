@@ -6,6 +6,9 @@
     <title> Add Game </title>
 </head>
 <body>
+        <div class="container mt-4 d-flex justify-content-center" >
+            <a href="../Pages/gamelist.php" class="btn btn-success mb-3">Add new game</a>
+        </div>
         <div class="mb-3">
             <label class="form-label">Title:</label>
             <input type="text" name="title" placeholder="Enter game title" value="<?= htmlspecialchars($game['title'] ?? '') ?>" required>
