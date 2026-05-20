@@ -63,6 +63,7 @@
                     echo "<td>" . $row["notes"] . "</td>";
                     echo "<td>" . $row["created_at"] . "</td>";
                     echo "<td>" . $row["updated_at"] . "</td>";
+                    echo "<td> lalalalala</td>";
                     echo "</tr>";
                 }
             ?>
