@@ -59,11 +59,10 @@
                     echo "<td>" . $row["street"] . " " . $row["house_number"] . "<br>" . $row["postal_code"] . " " . $row["city"] . "<br>" . $row["country"] . "</td>";
                     echo "<td>" . $row["contract_type"] . "</td>";
                     echo "<td>" . $row["employment_status"] . "</td>";
-                    echo "<td>" . $row["emergency_contact_name"] . "<br>" . $row["emergency_contact_phone"] . "</td>";
+                    echo "<td class='text-nowrap'>". $row["emergency_contact_name"]. "<br>". $row["emergency_contact_phone"]. "</td>";                   
                     echo "<td>" . $row["notes"] . "</td>";
                     echo "<td>" . $row["created_at"] . "</td>";
                     echo "<td>" . $row["updated_at"] . "</td>";
-                    echo "<td> lalalalala</td>";
                     echo "</tr>";
                 }
             ?>
