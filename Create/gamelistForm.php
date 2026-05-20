@@ -7,7 +7,7 @@
 </head>
 <body>
         <div class="container mt-4 d-flex justify-content-center" >
-            <a href="../Pages/gamelist.php" class="btn btn-success mb-3">Add new game</a>
+            <a href="../Pages/gamelist.php" class="btn btn-success mb-3">Return</a>
         </div>
         <div class="mb-3">
             <label class="form-label">Title:</label>

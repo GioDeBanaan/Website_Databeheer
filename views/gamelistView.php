@@ -45,14 +45,13 @@
                 <th>Rawg rating</th>
                 <th>Created at</th>
                 <th>Last updated at</th>
-                <th>update</th>
-                <th>delete</th>
+                <th>update delete</th>
             </tr>
             <?php foreach ($gameresult as $game):?>
                 <tr>
                     <td><?= htmlspecialchars($game["title"]) ?></td>
                     <td><?= htmlspecialchars($game["description"]) ?></td>
-                    <td><?= htmlspecialchars($game["released_at"]) ?></td>
+                    <td class="text-nowrap"><?= htmlspecialchars($game["released_at"]) ?></td>
                     <td><?= htmlspecialchars($game["genre_names"] ?? $game["genre_name"] ?? '') ?></td>
                     <td><?= htmlspecialchars($game["platform_names"] ?? $game["platform_name"] ?? '') ?></td>
                     <td><?= is_numeric($game["personal_rating"]) ? number_format((float)$game["personal_rating"], 1, '.', '') : htmlspecialchars($game["personal_rating"]) ?></td>
