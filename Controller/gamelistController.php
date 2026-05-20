@@ -4,7 +4,7 @@
     class GameListController
     {
         private Game $game;
-
+        
         public function __construct()
         {
             $this->game = new Game();
