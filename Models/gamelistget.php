@@ -4,6 +4,7 @@ require_once __DIR__ . "/config.php";
 class Game
 {
     private PDO $conn;
+    private const RAWG_API_KEY = '33ddc7bd021d4630b707464fe32c531b';
 
     public function __construct()
     {
@@ -76,8 +77,10 @@ class Game
 
     public function create(array $data): int
     {
-        $sql = "INSERT INTO games (title, description, released_at, personal_rating, genre_id, platform_id, created_at, updated_at)
-                VALUES (:title, :description, :released_at, :personal_rating, :genre_id, :platform_id, NOW(), NOW())";
+        $rawgRating = $this->fetchRawgRating($data['title']);
+
+        $sql = "INSERT INTO games (title, description, released_at, personal_rating, genre_id, platform_id, rawg_rating, created_at, updated_at)
+                VALUES (:title, :description, :released_at, :personal_rating, :genre_id, :platform_id, :rawg_rating, NOW(), NOW())";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(':title', $data['title'], PDO::PARAM_STR);
@@ -86,6 +89,7 @@ class Game
         $stmt->bindValue(':personal_rating', $data['personal_rating'], PDO::PARAM_STR);
         $stmt->bindValue(':genre_id', $this->getPrimaryId($data['genre_ids']), $this->getPrimaryId($data['genre_ids']) === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
         $stmt->bindValue(':platform_id', $this->getPrimaryId($data['platform_ids']), $this->getPrimaryId($data['platform_ids']) === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $stmt->bindValue(':rawg_rating', $rawgRating, $rawgRating === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
         $stmt->execute();
 
         $gameId = (int)$this->conn->lastInsertId();
@@ -93,6 +97,33 @@ class Game
         $this->syncPlatforms($gameId, $data['platform_ids']);
 
         return $gameId;
+    }
+
+    private function fetchRawgRating(string $title): ?string
+    {
+        $url = 'https://api.rawg.io/api/games?search=' . rawurlencode($title) . '&page_size=1&key=' . self::RAWG_API_KEY;
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
+        $response = curl_exec($ch);
+        if ($response === false) {
+            curl_close($ch);
+            return null;
+        }
+
+        curl_close($ch);
+        $data = json_decode($response, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return null;
+        }
+
+        if (!isset($data['results'][0]['rating'])) {
+            return null;
+        }
+
+        $rawRating = (float)$data['results'][0]['rating'];
+        return number_format($rawRating * 2, 1, '.', '');
     }
 
     public function update(int $id, array $data): bool
@@ -175,4 +206,37 @@ class Game
             $stmt->execute([':game_id' => $gameId, ':platform_id' => $platformId]);
         }
     }
+    public function ApiGetRating(int $gameId): ?float
+    {
+        $stmt = $this->conn->prepare('SELECT title FROM games WHERE game_id = :game_id');
+        $stmt->bindValue(':game_id', $gameId, PDO::PARAM_INT);
+        $stmt->execute();
+        $game = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$game) {
+            return null;
+        }
+
+        $apiKey = '33ddc7bd021d4630b707464fe32c531b';
+        $url = 'https://api.rawg.io/api/games/' . rawurlencode($game['title']) . '?key=' . $apiKey;
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        if ($response === false) {
+            return null;
+        }
+
+        $data = json_decode($response, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return null;
+        }
+
+        return isset($data['rating']) ? (float)$data['rating'] : null;
+    }
 }
+
