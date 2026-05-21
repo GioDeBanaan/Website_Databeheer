@@ -1,6 +1,6 @@
 <!-- 33ddc7bd021d4630b707464fe32c531b rawg API key -->
 <?php
-    require_once __DIR__ . "/../Models/gamelistget.php";
+    require_once __DIR__ . "../Models/gamelistget.php";
     class GameListController
     {
         private Game $game;
