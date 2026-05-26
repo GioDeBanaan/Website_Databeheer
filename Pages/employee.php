@@ -44,7 +44,9 @@
                 <th>Notes</th>
                 <th>Created at</th>
                 <th>Last updated at</th>
+                <th>Actions</th>
             </tr>
+            
             <?php
                 while ($row = $employeeresult->fetch(PDO::FETCH_ASSOC)) {
                     echo "<tr>";
@@ -61,6 +63,7 @@
                     echo "<td>" . $row["notes"] . "</td>";
                     echo "<td>" . $row["created_at"] . "</td>";
                     echo "<td>" . $row["updated_at"] . "</td>";
+                    echo "<td><a href=\"../Delete/employeedelete.php?employee_id=" . $row["employee_id"] . "\" class=\"btn btn-sm btn-danger\" onclick=\"return confirm('Are you sure you want to delete this employee?');\">Delete</a></td>";
                     echo "</tr>";
                 }
             ?>
