@@ -11,7 +11,20 @@
         </div>
         <div class="mb-3">
             <label class="form-label">Title:</label>
-            <input type="text" name="title" placeholder="Enter game title" value="<?= htmlspecialchars($game['title'] ?? '') ?>" required>
+            <div class="input-group">
+                <input type="text" id="title" name="title" class="form-control" placeholder="Enter game title" value="<?= htmlspecialchars($game['title'] ?? '') ?>" required>
+                <button class="btn btn-outline-secondary" type="button" id="searchBtn">Search RAWG</button>
+            </div>
+        </div>
+        
+        <div class="mb-3" id="searchResults" style="display:none;">
+            <label class="form-label">RAWG Search Results:</label>
+            <div id="resultsContainer" class="border p-3 bg-light" style="max-height: 400px; overflow-y: auto;">
+                <div id="loadingSpinner" class="text-center" style="display:none;">
+                    <span class="spinner-border spinner-border-sm me-2"></span>Searching...
+                </div>
+                <div id="resultsList"></div>
+            </div>
         </div>
         <br>
         <div class="mb-3">
@@ -81,4 +94,118 @@
                 ?>
         </div>
         <br>
+
+        <script>
+            const searchBtn = document.getElementById('searchBtn');
+            const titleInput = document.getElementById('title');
+            const searchResults = document.getElementById('searchResults');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const resultsList = document.getElementById('resultsList');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+
+            searchBtn.addEventListener('click', async function() {
+                const title = titleInput.value.trim();
+                
+                if (!title) {
+                    alert('Please enter a game title to search');
+                    return;
+                }
+
+                loadingSpinner.style.display = 'block';
+                resultsList.innerHTML = '';
+                searchResults.style.display = 'block';
+
+                try {
+                    const response = await fetch('../Controller/gamelistApi.php?action=search&query=' + encodeURIComponent(title), {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Search failed');
+                    }
+
+                    const data = await response.json();
+                    loadingSpinner.style.display = 'none';
+
+                    if (data.results && data.results.length > 0) {
+                        displayResults(data.results);
+                    } else {
+                        resultsList.innerHTML = '<p class="text-muted">No results found on RAWG</p>';
+                    }
+                } catch (error) {
+                    loadingSpinner.style.display = 'none';
+                    resultsList.innerHTML = '<p class="text-danger">Error searching RAWG: ' + error.message + '</p>';
+                }
+            });
+
+            function displayResults(results) {
+                resultsList.innerHTML = '';
+                
+                results.forEach(game => {
+                    const gameDiv = document.createElement('div');
+                    gameDiv.className = 'p-2 mb-2 border-bottom cursor-pointer hover-highlight';
+                    gameDiv.style.cursor = 'pointer';
+                    gameDiv.style.transition = 'background-color 0.2s';
+                    
+                    const releaseDate = game.released ? new Date(game.released).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'}) : 'Unknown';
+                    const rating = game.rating ? game.rating.toFixed(1) : 'N/A';
+                    const platforms = game.platforms && game.platforms.length > 0 
+                        ? game.platforms.map(p => p.platform.name).join(', ')
+                        : 'N/A';
+                    
+                    gameDiv.innerHTML = `
+                        <div>
+                            <strong>${escapeHtml(game.name)}</strong>
+                            <br>
+                            <small class="text-muted">
+                                Released: ${releaseDate} | Rating: ${rating}/10 | Platforms: ${platforms}
+                            </small>
+                        </div>
+                    `;
+                    
+                    gameDiv.addEventListener('mouseover', function() {
+                        this.style.backgroundColor = '#e9ecef';
+                    });
+                    
+                    gameDiv.addEventListener('mouseout', function() {
+                        this.style.backgroundColor = 'transparent';
+                    });
+                    
+                    gameDiv.addEventListener('click', function() {
+                        selectGame(game);
+                    });
+                    
+                    resultsList.appendChild(gameDiv);
+                });
+            }
+
+            function selectGame(game) {
+                titleInput.value = game.name;
+                
+                // Fill in the release date if available
+                if (game.released) {
+                    const dateInput = document.querySelector('input[name="released_at"]');
+                    if (dateInput) {
+                        dateInput.value = game.released;
+                    }
+                }
+                
+                searchResults.style.display = 'none';
+                alert('Game selected: ' + game.name + '\nRating: ' + (game.rating ? (game.rating * 2).toFixed(1) : 'N/A') + '/20');
+            }
+
+            function escapeHtml(text) {
+                const map = {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                };
+                return text.replace(/[&<>"']/g, m => map[m]);
+            }
+        </script>
 </body>

@@ -5,6 +5,49 @@ header('Content-Type: text/html; charset=utf-8');
 
 $apiKey = '33ddc7bd021d4630b707464fe32c531b';
 
+// Handle JSON search requests
+if (isset($_GET['action']) && $_GET['action'] === 'search') {
+    header('Content-Type: application/json');
+    
+    $query = $_GET['query'] ?? '';
+    if (empty($query)) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Query parameter is required']);
+        exit;
+    }
+
+    $results = searchRawgGames($query, $apiKey);
+    echo json_encode($results);
+    exit;
+}
+
+function searchRawgGames(string $query, string $apiKey): array
+{
+    $url = 'https://api.rawg.io/api/games?search=' . rawurlencode($query) . '&page_size=10&key=' . $apiKey;
+    
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($response === false) {
+        return ['error' => 'Failed to connect to RAWG API', 'results' => []];
+    }
+    
+    $data = json_decode($response, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return ['error' => 'Invalid JSON response from RAWG API', 'results' => []];
+    }
+    
+    return [
+        'results' => $data['results'] ?? [],
+        'count' => $data['count'] ?? 0
+    ];
+}
+
 function fetchRawgRating(string $title, string $apiKey): ?string
 {
     $url = 'https://api.rawg.io/api/games?search=' . rawurlencode($title) . '&page_size=1&key=' . $apiKey;
