@@ -34,7 +34,6 @@
                 <th>Name</th>
                 <th>Contact</th>
                 <th>Job title</th>
-                <th>Department</th>
                 <th>Hire date</th>
                 <th>Salary</th>
                 <th>Birth date</th>
@@ -51,12 +50,11 @@
                     echo "<tr>";
                     echo "<td>". $row["first_name"] . " " . $row["last_name"] . "</td>";
                     echo "<td>" . $row["email"] . "<br>" . $row["phone"] . "</td>";
-                    echo "<td>" . $row["job_title"] . "</td>";
-                    echo "<td>" . $row["department"] . "</td>";
-                    echo "<td>" . $row["hire_date"] . "</td>";
+                    echo "<td>" . $row["job_title"] . "<br><small class='text-muted'>" . $row["department"] . "</small></td>";
+                    echo "<td class='text-nowrap'>" . $row["hire_date"] . "</td>";
                     echo "<td>" . "€" . $row["salary"] . "</td>";
-                    echo "<td>" . $row["birth_date"] . "</td>";
-                    echo "<td>" . $row["street"] . " " . $row["house_number"] . "<br>" . $row["postal_code"] . " " . $row["city"] . "<br>" . $row["country"] . "</td>";
+                    echo "<td class='text-nowrap'>" . $row["birth_date"] . "</td>";
+                    echo "<td class='text-nowrap'>" . $row["street"] . " " . $row["house_number"] . "<br>" . $row["postal_code"] . " <br> <small class='text-muted'>" . $row["city"] . "</small></td>";
                     echo "<td>" . $row["contract_type"] . "</td>";
                     echo "<td>" . $row["employment_status"] . "</td>";
                     echo "<td class='text-nowrap'>". $row["emergency_contact_name"]. "<br>". $row["emergency_contact_phone"]. "</td>";                   
