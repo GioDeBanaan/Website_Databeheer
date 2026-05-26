@@ -39,25 +39,47 @@
         <br>
         <?php
             $ratingValue = isset($game['personal_rating']) ? number_format((float)$game['personal_rating'], 1, '.', '') : '5.0';
-            $ratingDisplay = str_replace('.', ',', $ratingValue);
             $selectedGenres = isset($game['genre_ids']) ? (array) $game['genre_ids'] : [];
             $selectedPlatforms = isset($game['platform_ids']) ? (array) $game['platform_ids'] : [];
         ?>
-        <label class="form-label">Personal Rating: <span id="value"><?= $ratingDisplay ?></span></label>
+        <label class="form-label">Personal Rating:</label>
         <br>
-        <input type="range" id="rating" name="rating" min="1.0" max="10.0" step="0.1" value="<?= $ratingValue ?>" required />
+        <div>
+            <input type="range" id="rating" name="rating" min="1.0" max="10.0" step="0.1" value="<?= $ratingValue ?>" required style="flex: 1;" />
+            <input type="number" id="ratingValue" class="form-control" style="width: 80px;" min="1.0" max="10.0" step="0.1" value="<?= $ratingValue ?>" lang="en-US" />
+        </div>
         <script>
-            const valueDisplay = document.getElementById("value");
             const ratingSlider = document.getElementById("rating");
+            const ratingInput = document.getElementById("ratingValue");
 
-            function updateRatingDisplay() {
-                valueDisplay.textContent = parseFloat(ratingSlider.value).toFixed(1);
-            }
+            ratingSlider.addEventListener('input', function() {
+                const value = parseFloat(this.value).toFixed(1);
+                ratingInput.value = value;
+            });
 
-            ratingSlider.addEventListener('input', updateRatingDisplay);
-            updateRatingDisplay();
+            ratingInput.addEventListener('input', function() {
+                let value = this.value.replace(',', '.');
+                value = parseFloat(value);
+                
+                if (isNaN(value)) {
+                    return;
+                }
+                if (value < 1.0) value = 1.0;
+                if (value > 10.0) value = 10.0;
+                
+                this.value = value.toFixed(1);
+                ratingSlider.value = value;
+            });
+
+            ratingInput.addEventListener('change', function() {
+                let value = this.value.replace(',', '.');
+                ratingSlider.value = value;
+            });
+            ratingInput.addEventListener('blur', function() {
+                let value = this.value.replace(',', '.');
+                this.value = parseFloat(value).toFixed(1);
+            });
         </script>
-        <br>
         <div class="mb-3">
             <label class="form-label">Genre:</label>
             <br>
@@ -103,7 +125,19 @@
             const resultsList = document.getElementById('resultsList');
             const loadingSpinner = document.getElementById('loadingSpinner');
 
-            searchBtn.addEventListener('click', async function() {
+            // Trigger search when pressing Enter in the title input
+            titleInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    performSearch();
+                }
+            });
+
+            searchBtn.addEventListener('click', function() {
+                performSearch();
+            });
+
+            async function performSearch() {
                 const title = titleInput.value.trim();
                 
                 if (!title) {
@@ -133,13 +167,13 @@
                     if (data.results && data.results.length > 0) {
                         displayResults(data.results);
                     } else {
-                        resultsList.innerHTML = '<p class="text-muted">No results found on RAWG</p>';
+                        resultsList.innerHTML = '<div class="alert alert-warning mb-0"><strong>Warning:</strong> No results found on RAWG for "' + escapeHtml(title) + '". The game may not exist in the database or might be listed under a different title.</div>';
                     }
                 } catch (error) {
                     loadingSpinner.style.display = 'none';
                     resultsList.innerHTML = '<p class="text-danger">Error searching RAWG: ' + error.message + '</p>';
                 }
-            });
+            }
 
             function displayResults(results) {
                 resultsList.innerHTML = '';
