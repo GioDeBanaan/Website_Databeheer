@@ -1,9 +1,10 @@
 <?php
 
-    $host = "panel.nietmeerleuk.me";
-    $dbname = "database-school";
-    $username = "periode4";
-    $password = "WachtWoord123!!";
+    $host = "localhost";
+    $dbname = "gamevault";
+    $username = "root";
+    $password = "";
+
     try {
         $conn = new PDO(
             "mysql:host=$host;dbname=$dbname;charset=utf8",
@@ -38,7 +39,7 @@
     $supplierresult = $conn->query($sql);
     // concat is als je twee of meer dingen in een wil hebben zoals hier wil ik voor en achternaam samen dit is effe een reminder voor kai
 
-    $sql = "SELECT t.transaction_id, t.transaction_code, t.transaction_type,  CONCAT(c.first_name, ' ', c.last_name) AS customer_name, s.company_name AS supplier_name, g.title AS game_title, t.transaction_date, t.quantity, t.unit_price, t.discount_percent, t.tax_percent, t.payment_method, t.payment_status, t.order_status, t.shipping_address, t.billing_address, t.reference_note, t.notes, t.created_at, t.updated_at FROM transactions t LEFT JOIN customers c ON t.customer_id = c.customer_id LEFT JOIN suppliers s ON t.supplier_id = s.supplier_id LEFT JOIN games g ON t.game_id = g.game_id ORDER BY t.transaction_id DESC";
+    $sql = "SELECT t.transaction_id, t.transaction_code, t.transaction_type,  CONCAT(c.first_name, ' ', c.last_name) AS customer_name, s.company_name AS supplier_name, g.title AS game_title, t.transaction_date, t.quantity, t.unit_price, t.discount_percent, t.tax_percent, t.payment_method, t.payment_status, t.order_status, t.created_at, t.updated_at FROM transactions t LEFT JOIN customers c ON t.customer_id = c.customer_id LEFT JOIN suppliers s ON t.supplier_id = s.supplier_id LEFT JOIN games g ON t.game_id = g.game_id ORDER BY t.transaction_id DESC";
 
     $transactionresult = $conn->query($sql);
 
