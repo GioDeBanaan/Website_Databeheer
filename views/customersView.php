@@ -31,6 +31,9 @@
                 </li>
             </ul>
         </header>
+        <div class="container mt-4 d-flex justify-content-center" >
+            <a href="../Create/customersCreate.php" class="btn btn-success mb-3">Add new customer</a>
+        </div>
         <table class="table table-bordered">
             <tr>
                 <th>Name</th>
@@ -51,7 +54,7 @@
                     <td><?= htmlspecialchars($customer["gender"]) ?></td>
                     <td class="text-nowrap"><?= htmlspecialchars($customer["date_of_birth"]) ?></td>
                     <td><?= htmlspecialchars($customer["email"]) ?><br><?= htmlspecialchars($customer["phone"]) ?></td>
-                    <td><?= htmlspecialchars($customer["street"]) ?> <?= htmlspecialchars($customer["house_number"]) ?><br><?= htmlspecialchars($customer["postal_code"]) ?> <?= htmlspecialchars($customer["city"]) ?><br><?= htmlspecialchars($customer["country"]) ?></td>
+                    <td class="text-nowrap"><?= htmlspecialchars($customer["street"]) ?> <?= htmlspecialchars($customer["house_number"]) ?><br><?= htmlspecialchars($customer["postal_code"]) ?> <?= "<br> <small class=\"text-muted\">".htmlspecialchars($customer["city"])."</small><br> <small class=\"text-muted\">".htmlspecialchars($customer["country"]) ?></td>
                     <td><?= htmlspecialchars($customer["registration_date"]) ?></td>
                     <td><?= htmlspecialchars($customer["customer_status"]) ?></td>
                     <td><?= htmlspecialchars($customer["loyalty_points"]) ?></td>

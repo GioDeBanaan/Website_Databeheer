@@ -34,7 +34,6 @@
                 <th>Name</th>
                 <th>Contact</th>
                 <th>Job title</th>
-                <th>Department</th>
                 <th>Hire date</th>
                 <th>Salary</th>
                 <th>Birth date</th>
@@ -45,24 +44,26 @@
                 <th>Notes</th>
                 <th>Created at</th>
                 <th>Last updated at</th>
+                <th>Actions</th>
             </tr>
+            
             <?php
                 while ($row = $employeeresult->fetch(PDO::FETCH_ASSOC)) {
                     echo "<tr>";
                     echo "<td>". $row["first_name"] . " " . $row["last_name"] . "</td>";
                     echo "<td>" . $row["email"] . "<br>" . $row["phone"] . "</td>";
-                    echo "<td>" . $row["job_title"] . "</td>";
-                    echo "<td>" . $row["department"] . "</td>";
-                    echo "<td>" . $row["hire_date"] . "</td>";
+                    echo "<td>" . $row["job_title"] . "<br><small class='text-muted'>" . $row["department"] . "</small></td>";
+                    echo "<td class='text-nowrap'>" . $row["hire_date"] . "</td>";
                     echo "<td>" . "€" . $row["salary"] . "</td>";
-                    echo "<td>" . $row["birth_date"] . "</td>";
-                    echo "<td>" . $row["street"] . " " . $row["house_number"] . "<br>" . $row["postal_code"] . " " . $row["city"] . "<br>" . $row["country"] . "</td>";
+                    echo "<td class='text-nowrap'>" . $row["birth_date"] . "</td>";
+                    echo "<td class='text-nowrap'>" . $row["street"] . " " . $row["house_number"] . "<br>" . $row["postal_code"] . " <br> <small class='text-muted'>" . $row["city"] . "</small></td>";
                     echo "<td>" . $row["contract_type"] . "</td>";
                     echo "<td>" . $row["employment_status"] . "</td>";
                     echo "<td class='text-nowrap'>". $row["emergency_contact_name"]. "<br>". $row["emergency_contact_phone"]. "</td>";                   
                     echo "<td>" . $row["notes"] . "</td>";
                     echo "<td>" . $row["created_at"] . "</td>";
                     echo "<td>" . $row["updated_at"] . "</td>";
+                    echo "<td><a href=\"../Delete/employeedelete.php?employee_id=" . $row["employee_id"] . "\" class=\"btn btn-sm btn-danger\" onclick=\"return confirm('Are you sure you want to delete this employee?');\">Delete</a></td>";
                     echo "</tr>";
                 }
             ?>

@@ -6,6 +6,9 @@ include __DIR__ . "/../Controller/customersController.php";
     <title> Add Customer </title>
 </head>
 <body>
+            <div class="container mt-4 d-flex justify-content-center" >
+            <a href="../Pages/customers.php" class="btn btn-success mb-3">Return</a>
+        </div>
         <div class="mb-3">
             <label class="form-label">First Name:</label>
             <input type="text" name="first_name" placeholder="Enter first name" required>
@@ -86,11 +89,6 @@ include __DIR__ . "/../Controller/customersController.php";
             <label class="form-label">Newsletter Subscribed:</label>
             <input type="radio" name="newsletter_subscribed" value="1">Yes</input>
             <input type="radio" name="newsletter_subscribed" value="0">No</input>
-        </div>
-        <br>
-        <div class="mb-3">
-            <label class="form-label">Notes:</label>
-            <textarea name="notes" placeholder="Enter any additional notes" rows="4"></textarea>
         </div>
     </form>
 </body>
