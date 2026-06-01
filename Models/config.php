@@ -1,9 +1,9 @@
 <?php
 
-    $host = "localhost";
-    $dbname = "gamevault";
-    $username = "root";
-    $password = "";
+    $host = "panel.nietmeerleuk.me";
+    $dbname = "database-school";
+    $username = "periode4";
+    $password = "WachtWoord123!!";
 
     try {
         $conn = new PDO(
