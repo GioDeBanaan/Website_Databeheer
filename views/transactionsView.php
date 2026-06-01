@@ -15,7 +15,7 @@ if (!isset($transactionresults)) {
                     <a href="../index.html" class="nav-link">Home </a>
                 </li>
                 <li class="nav-item">
-                    <a href="gamelist.php" class="navbar-brand"> Game list</a>
+                    <a href="gamelist.php" class="nav-link"> Game list</a>
                 </li>
                 <li class="nav-item">
                     <a href="customers.php" class="nav-link"> Customers</a>
@@ -27,7 +27,7 @@ if (!isset($transactionresults)) {
                     <a href="suppliers.php" class="nav-link"> Suppliers</a>
                 </li>
                 <li class="nav-item">
-                    <a href="transactions.php" class="nav-link"> Transactions</a>
+                    <a href="transactions.php" class="navbar-brand"> Transactions</a>
                 </li>
             </ul>
         </header>
