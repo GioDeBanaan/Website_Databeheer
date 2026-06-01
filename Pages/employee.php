@@ -29,6 +29,13 @@
                 </li>
             </ul>
         </header>
+
+<!-- Employee create knop -->
+<div class="d-flex justify-content-center my-4">
+    <a href="../Create/employeeCreate.php" class="btn btn-success">Create Employee</a>
+</div>
+
+<!-- Employee tabel -->
         <table class="table table-bordered">
             <tr>
                 <th>Name</th>
@@ -55,7 +62,7 @@
                     echo "<td>" . $row["email"] . "<br>" . $row["phone"] . "</td>";
                     echo "<td>" . $row["job_title"] . "<br><small class='text-muted'>" . $row["department"] . "</small></td>";
                     echo "<td class='text-nowrap'>" . $row["hire_date"] . "</td>";
-                    echo "<td>" . "€" . $row["salary"] . "</td>";
+                    echo "<td>" . "₪" . $row["salary"] . "</td>";
                     echo "<td class='text-nowrap'>" . $row["birth_date"] . "</td>";
                     echo "<td class='text-nowrap'>" . $row["street"] . " " . $row["house_number"] . "<br>" . $row["postal_code"] . " <br> <small class='text-muted'>" . $row["city"] . "</small></td>";
                     echo "<td>" . $row["contract_type"] . "</td>";
