@@ -44,12 +44,8 @@
                 <th>Notes</th>
                 <th>Created at</th>
                 <th>Last updated at</th>
-<<<<<<< HEAD
                 <th>Update</th>
                 <th>Delete</th>
-=======
-                <th>Actions</th>
->>>>>>> b4f6cf5b199b755242295d6d163ce28ce40d00e1
             </tr>
             
             <?php
