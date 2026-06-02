@@ -37,7 +37,10 @@ $cancelUrl = $cancelUrl ?? '../Pages/employee.php';
         </div>
         <div class="col-md-3">
             <label class="form-label">Contract type</label>
-            <input type="text" name="contract_type" class="form-control" value="<?= htmlspecialchars($employee['contract_type'] ?? '') ?>">
+           <input type="radio" name="contract_type" value="Fulltime" <?= (isset($employee['contract_type']) && $employee['contract_type'] === 'Fulltime') ? 'checked' : '' ?>> Fulltime
+           <input type="radio" name="contract_type" value="Parttime" <?= (isset($employee['contract_type']) && $employee['contract_type'] === 'Parttime') ? 'checked' : '' ?>> Parttime
+           <input type="radio" name="contract_type" value="Intern" <?= (isset($employee['contract_type']) && $employee['contract_type'] === 'Intern') ? 'checked' : '' ?>> Intern
+           <input type="radio" name="contract_type" value="Temporary" <?= (isset($employee['contract_type']) && $employee['contract_type'] === 'Temporary') ? 'checked' : '' ?>> Temporary
         </div>
         <div class="col-md-3">
             <label class="form-label">Employment status</label>
