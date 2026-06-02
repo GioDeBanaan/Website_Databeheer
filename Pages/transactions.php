@@ -1,5 +1,4 @@
 <?php
-<<<<<<< HEAD
     require_once __DIR__ . "/../Controller/transactionsController.php";
     ?>
 
@@ -81,11 +80,3 @@
         </table>
     </body>
 </html>
-=======
-
-require_once __DIR__ . '/../Controller/transactionsController.php';
-
-$controller = new TransactionsController();
-$controller->index();
-?>
->>>>>>> b4f6cf5b199b755242295d6d163ce28ce40d00e1
