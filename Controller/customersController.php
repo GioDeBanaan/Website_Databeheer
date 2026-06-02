@@ -28,23 +28,12 @@
             exit();
         }
 
-        private function getFormData(): array
+        public function create(): void
         {
-            return [
-                'first_name' => $_POST['first_name'] ?? '',
-                'last_name' => $_POST['last_name'] ?? '',
-                'gender' => $_POST['gender'] ?? '',
-                'date_of_birth' => $_POST['date_of_birth'] ?? '',
-                'email' => $_POST['email'] ?? '',
-                'phone' => $_POST['phone'] ?? '',
-                'street' => $_POST['street'] ?? '',
-                'house_number' => $_POST['house_number'] ?? '',
-                'postal_code' => $_POST['postal_code'] ?? '',
-                'city' => $_POST['city'] ?? '',
-                'country' => $_POST['country'] ?? ''
-            ];
+            require __DIR__ . '/../Create/customersCreate.php';
         }
-                public function edit(int $id): void
+
+        public function edit(int $id): void
         {
             $customer = $this->customer->find($id);
             if (!$customer) {
@@ -53,13 +42,30 @@
 
             require __DIR__ . '/../Create/customersEdit.php';
         }
-                public function update(int $id): void
+
+        public function update(int $id): void
         {
             $this->customer->update($id, $this->getFormData());
             header("Location: customers.php");
             exit();
         }
 
-
+        private function getFormData(): array
+        {
+            return [
+                'customer_code' => $_POST['customer_code'],
+                'first_name' => $_POST['first_name'],
+                'last_name' => $_POST['last_name'],
+                'gender' => $_POST['gender'],
+                'date_of_birth' => $_POST['date_of_birth'],
+                'email' => $_POST['email'],
+                'phone' => $_POST['phone'],
+                'street' => $_POST['street'],
+                'house_number' => $_POST['house_number'],
+                'postal_code' => $_POST['postal_code'],
+                'city' => $_POST['city'],
+                'country' => $_POST['country']
+            ];
+        }
     }
 ?>

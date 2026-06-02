@@ -1,6 +1,6 @@
 <?php
     require_once __DIR__ . "/../Controller/customersController.php";
-
+    
 $controller = new CustomersController();
 $action = $_GET['action'] ?? 'index';
 $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
