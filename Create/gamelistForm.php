@@ -29,12 +29,20 @@
         <br>
         <div class="mb-3">
             <label class="form-label">Description:</label>
+<<<<<<< HEAD
+            <input class="form-control" type="text" name="description" placeholder="Enter game description" value="<?= htmlspecialchars($game['description'] ?? '') ?>" required>
+=======
             <input class="form-control" type="text" name="description" placeholder="Enter game description" value="<?= isset($game['description']) ? htmlspecialchars($game['description']) : '' ?>" required>
+>>>>>>> b4f6cf5b199b755242295d6d163ce28ce40d00e1
         </div>
         <br>
         <div class="mb-3">
             <label class="form-label">Release Date:</label>
+<<<<<<< HEAD
+            <input type="date" name="released_at" min="1950" max="2026" value="<?= htmlspecialchars($game['released_at'] ?? '') ?>" required>
+=======
             <input type="date" name="released_at" min="1950" max="2026" value="<?= isset($game['released_at']) ? htmlspecialchars($game['released_at']) : '' ?>" required>
+>>>>>>> b4f6cf5b199b755242295d6d163ce28ce40d00e1
         </div>
         <br>
         <?php
