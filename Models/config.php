@@ -4,7 +4,6 @@
     $dbname = "database-school";
     $username = "periode4";
     $password = "WachtWoord123!!";
-
     try {
         $conn = new PDO(
             "mysql:host=$host;dbname=$dbname;charset=utf8",
