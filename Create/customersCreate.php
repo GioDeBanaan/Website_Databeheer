@@ -11,7 +11,6 @@
             <?php include __DIR__ . "/../Models/config.php"; 
             include __DIR__ . "/customersForm.php"; ?>
         <button type="submit" class="btn btn-primary">Add customer</button>
->>>>>>> b4f6cf5b199b755242295d6d163ce28ce40d00e1
     </form>
     </body>
 </html>
