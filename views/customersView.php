@@ -47,6 +47,8 @@
                 <th>Newsletter status</th>
                 <th>Created at</th>
                 <th>Last updated at</th>
+                <th>Update</th>
+                <th>Delete</th>
             </tr>
             <?php foreach ($customerresult as $customer):?>
                 <tr>
@@ -61,6 +63,8 @@
                     <td><?= $customer["newsletter_subscribed"] == 1 ? 'Yes' : ($customer["newsletter_subscribed"] == 0 ? 'No' : htmlspecialchars($customer["newsletter_subscribed"])) ?></td>
                     <td><?= htmlspecialchars($customer["created_at"]) ?></td>
                     <td><?= htmlspecialchars($customer["updated_at"]) ?></td>
+                    <td><a href="../Create/customersEdit.php?id=<?= htmlspecialchars($customer["customer_id"]) ?>" class="btn btn-primary btn-sm">Edit</a></td>
+                    <td><a href="../Delete/customers.php?action=delete&id=<?= htmlspecialchars($customer["customer_id"]) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this customer?')">Delete</a></td>
                 </tr>
             <?php endforeach; ?>
         </table>
