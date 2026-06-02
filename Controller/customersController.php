@@ -28,11 +28,6 @@
             exit();
         }
 
-        public function create(): void
-        {
-            require __DIR__ . '/../Create/customersCreate.php';
-        }
-
         public function edit(int $id): void
         {
             $customer = $this->customer->find($id);
