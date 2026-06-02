@@ -25,6 +25,7 @@ include __DIR__ . "/../Controller/customersController.php";
             <input type="radio" name="gender" value="Male" required>Male</input>
             <input type="radio" name="gender" value="Female" required>Female</input>
             <input type="radio" name="gender" value="Other" required>Other</input>
+            <input type="radio" name="gender" value="Prefer_not_to_say" required>Prefer not to say</input>
         </div>
         <br>
         <div class="mb-3">
