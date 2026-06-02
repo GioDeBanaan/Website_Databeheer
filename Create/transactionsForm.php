@@ -1,15 +1,10 @@
 <?php
 include __DIR__ . "/../Controller/transactionsController.php";
 ?>
-<head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title> Add Transaction </title>
-</head>
-<body>
     <div class="container mt-5">
         <div class="mb-3">
             <label class="form-label">Transaction Code:</label>
-            <input type="text" name="transaction_code" placeholder="Enter transaction code" required?>
+            <input type="text" name="transaction_code" placeholder="Enter transaction code" required>
         </div>
         <br>
         <div class="mb-3">
@@ -81,6 +76,4 @@ include __DIR__ . "/../Controller/transactionsController.php";
             <input type="text" name="order_status" placeholder="Enter order status" required>
         </div>
         <br>
-    </form>
-</div>
-</body>
+    </div>

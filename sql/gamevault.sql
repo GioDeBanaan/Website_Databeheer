@@ -29,7 +29,6 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `customers` (
   `customer_id` int(11) NOT NULL,
-  `customer_code` varchar(20) NOT NULL,
   `first_name` varchar(50) NOT NULL,
   `last_name` varchar(50) NOT NULL,
   `gender` enum('Male','Female','Other','Prefer not to say') DEFAULT 'Prefer not to say',
@@ -54,7 +53,7 @@ CREATE TABLE `customers` (
 -- Gegevens worden geëxporteerd voor tabel `customers`
 --
 
-INSERT INTO `customers` (`customer_id`, `customer_code`, `first_name`, `last_name`, `gender`, `date_of_birth`, `email`, `phone`, `street`, `house_number`, `postal_code`, `city`, `country`, `registration_date`, `customer_status`, `loyalty_points`, `newsletter_subscribed`, `notes`, `created_at`, `updated_at`) VALUES
+INSERT INTO `customers` (`customer_id`, `first_name`, `last_name`, `gender`, `date_of_birth`, `email`, `phone`, `street`, `house_number`, `postal_code`, `city`, `country`, `registration_date`, `customer_status`, `loyalty_points`, `newsletter_subscribed`, `notes`, `created_at`, `updated_at`) VALUES
 (1, 'CUST001', 'Jan', 'Jansen', 'Male', '1990-05-12', 'jan@example.com', '0612345678', 'Dorpsstraat', '1', '1234AB', 'Utrecht', 'Netherlands', '2024-01-01', 'Active', 100, 0, NULL, '2026-04-20 12:09:51', '2026-04-20 12:09:51'),
 (2, 'CUST002', 'Lisa', 'de Vries', 'Female', '1995-08-20', 'lisa@example.com', '0623456789', 'Kerkstraat', '10', '2345BC', 'Amsterdam', 'Netherlands', '2024-02-15', 'Active', 50, 0, NULL, '2026-04-20 12:09:51', '2026-04-20 12:09:51'),
 (3, 'CUST003', 'Tom', 'Bakker', 'Male', '1988-11-02', 'tom@example.com', '0634567890', 'Schoolstraat', '22', '3456CD', 'Eindhoven', 'Netherlands', '2024-03-10', 'Active', 200, 0, NULL, '2026-04-20 12:09:51', '2026-04-20 12:09:51');
@@ -282,7 +281,6 @@ INSERT INTO `transactions` (`transaction_id`, `transaction_code`, `transaction_t
 --
 ALTER TABLE `customers`
   ADD PRIMARY KEY (`customer_id`),
-  ADD UNIQUE KEY `customer_code` (`customer_code`),
   ADD UNIQUE KEY `email` (`email`);
 
 --
