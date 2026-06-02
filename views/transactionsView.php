@@ -74,9 +74,47 @@ if (!isset($transactionresults)) {
                     <td><?= htmlspecialchars($transaction["order_status"]) ?></td>
                     <td><?= htmlspecialchars($transaction["created_at"]) ?></td>
                     <td><?= htmlspecialchars($transaction["updated_at"]) ?></td>
-                    <td><a href="../Create/transactionsEdit.php?id=<?= $transaction['transaction_id'] ?>" class="btn btn-primary">Edit</a></td>
+                    <td><a href="../Create/transactionsEdit.php?id=<?= $transaction['transaction_id'] ?>" class="btn btn-primary">Edit</a>
+                    <a href="../Delete/transactiondelete.php?id=<?= $transaction['transaction_id'] ?>" class="btn btn-danger">Delete</a></td>
                 </tr>
             <?php endforeach; ?>
         </table>
+
+
+                <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="deleteImage" src="../mqdefault.jpg" alt="Transaction Image" class="img-fluid mb-3">
+                    <p>Are you sure you want to delete <strong id="deleteTitle"></strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let deleteTransactionId = null;
+
+        function setDeleteData(transactionId, transactionTitle) {
+            deleteTransactionId = transactionId;
+            document.getElementById('deleteTitle').textContent = transactionTitle;
+        }
+
+        function confirmDelete() {
+            if (deleteTransactionId) {
+                window.location.href = '../Delete/transactiondelete.php?id=' + deleteTransactionId;
+            }
+        }
+    </script>
+
     </body>
 </html>

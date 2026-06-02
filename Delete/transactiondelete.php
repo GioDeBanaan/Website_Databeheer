@@ -1,29 +1,26 @@
 <?php
-require_once "config.php";
+require_once __DIR__ . '/../Models/config.php';
 
-// Check if ID parameter exists
-if (isset($_GET['transaction_id'])) {
-	$transaction_id = $_GET['transaction_id'];
+// Change 'transaction_id' to 'id' to match standard query strings
+if (isset($_GET['id'])) {
+    $transaction_id = $_GET['id'];
 
-	// SQL delete query
-	$sql = "DELETE FROM project WHERE transaction_id = :transaction_id";
+    $sql = "DELETE FROM transactions WHERE transaction_id = :transaction_id";
 
-	// Execute with parameterized query (prevents SQL injection)
-	try {			
-		$stmt = $connection->prepare($sql);
-		$stmt->execute([
-			":transaction_id" => $transaction_id
-			]);
-			
-		header("Location: transactions.php?status=succesdel");
-		exit;
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([
+            ':transaction_id' => $transaction_id
+        ]);
 
-	}
-	catch (PDOException $e) {
-		echo "Fout: " . $e->getMessage();
-	}
+        header('Location: ../Pages/transactions.php?status=succesdel');
+        exit;
+    } catch (PDOException $e) {
+        echo 'Fout: ' . $e->getMessage();
+        exit;
+    }
 }
-else {
-	header("Location: transactions.php?status=fail");
-	exit;
-}
+
+// If it fails, redirect back to transactions, not employees!
+header('Location: ../Pages/transactions.php?status=fail');
+exit;

@@ -1,4 +1,24 @@
 <?php
+<<<<<<< HEAD
+require_once __DIR__ . '/../Controller/transactionsController.php';
+
+$controller = new TransactionsController();
+
+// 1. Look at the URL to see what action we want
+$action = $_GET['action'] ?? 'index';
+
+// 2. Route the traffic based on the action
+if ($action === 'store' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    // We caught the form submission! Run the store method.
+    $controller->store();
+} elseif ($action === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    // $controller->update(); 
+} else {
+    // Default behavior
+    $controller->index();
+}
+?>
+=======
     require_once __DIR__ . "/../Controller/transactionsController.php";
     ?>
 
@@ -80,3 +100,4 @@
         </table>
     </body>
 </html>
+>>>>>>> 9bac8ce3aee47b0a319f9f2b638c4343bd843246
