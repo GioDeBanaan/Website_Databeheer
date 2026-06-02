@@ -13,6 +13,7 @@ class Customer
 
     public function all(): array
     {
+<<<<<<< HEAD
             $sql = "SELECT customer_id,  first_name, last_name, gender, date_of_birth, email, phone, street, house_number, postal_code, city, country, registration_date, customer_status, loyalty_points, newsletter_subscribed, created_at, updated_at FROM customers ORDER BY customer_id DESC";
         return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -91,4 +92,9 @@ class Customer
     }
 
 
+=======
+            $sql = "SELECT customer_id, customer_code, first_name, last_name, gender, date_of_birth, email, phone, street, house_number, postal_code, city, country, registration_date, customer_status, loyalty_points, newsletter_subscribed,  created_at, updated_at FROM customers ORDER BY customer_id DESC";
+        return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+>>>>>>> b4f6cf5b199b755242295d6d163ce28ce40d00e1
 }
