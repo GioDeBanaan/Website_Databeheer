@@ -79,4 +79,8 @@
             <?php endforeach; ?>
         </table>
     </body>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> 7b1a628a42c4e78ecdb6fd5b00f3217c57c8bf44

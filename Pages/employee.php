@@ -53,6 +53,10 @@
                 <th>Last updated at</th>
                 <th>Update</th>
                 <th>Delete</th>
+<<<<<<< HEAD
+=======
+                <th>Actions</th>
+>>>>>>> 7b1a628a42c4e78ecdb6fd5b00f3217c57c8bf44
             </tr>
             
             <?php
@@ -73,6 +77,10 @@
                     echo "<td>" . $row["updated_at"] . "</td>";
                     echo "<td><a href=\"../Create/employeEdit.php?employee_id=" . $row["employee_id"] . "\" class=\"btn btn-sm btn-primary\">Edit</a></td>";
                     echo "<td><a href=\"../Delete/employeeDelete.php?employee_id=" . $row["employee_id"] . "\" class=\"btn btn-sm btn-danger\" onclick=\"return confirm('Are you sure you want to delete this employee?');\">Delete</a></td>";
+<<<<<<< HEAD
+=======
+                    echo "<td><a href=\"../Delete/employeedelete.php?employee_id=" . $row["employee_id"] . "\" class=\"btn btn-sm btn-danger\" onclick=\"return confirm('Are you sure you want to delete this employee?');\">Delete</a></td>";
+>>>>>>> 7b1a628a42c4e78ecdb6fd5b00f3217c57c8bf44
                     echo "</tr>";
                 }
             ?>

@@ -48,7 +48,6 @@
         private function getFormData(): array
         {
             return [
-                'customer_code' => $_POST['customer_code'],
                 'first_name' => $_POST['first_name'],
                 'last_name' => $_POST['last_name'],
                 'gender' => $_POST['gender'],
