@@ -16,17 +16,10 @@
         require __DIR__ . '/../views/customersView.php';
         }
 
-<<<<<<< HEAD
         public function create(): void
         {
             require __DIR__ .'/../create/customersCreate.php';
         }
-=======
-        // public function create(): void
-        // {
-        //     require __DIR__ .'/../create/customersCreate.php';
-        // }
->>>>>>> b4f6cf5b199b755242295d6d163ce28ce40d00e1
 
         public function store(): void
         {
@@ -74,6 +67,5 @@
                 'country' => $_POST['country']
             ];
         }
->>>>>>> b4f6cf5b199b755242295d6d163ce28ce40d00e1
     }
 ?>
