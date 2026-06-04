@@ -32,7 +32,7 @@
 
 <!-- Employee create knop -->
 <div class="d-flex justify-content-center my-4">
-    <a href="../Create/employeeCreate.php" class="btn btn-success">Create Employee</a>
+    <a href="../Create/employeeCreate.php" class="btn btn-success">Add new employee</a>
 </div>
 
 <!-- Employee tabel -->
@@ -53,7 +53,6 @@
                 <th>Last updated at</th>
                 <th>Update</th>
                 <th>Delete</th>
-                <th>Actions</th>
             </tr>
             
             <?php
