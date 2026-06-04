@@ -15,6 +15,10 @@ $cancelUrl = $cancelUrl ?? '../Pages/employee.php';
             <label class="form-label">Last name</label>
             <input type="text" name="last_name" class="form-control" value="<?= htmlspecialchars($employee['last_name'] ?? '') ?>" required>
         </div>
+        <div class="col-md-4">
+            <label class="form-label">Birth date</label>
+            <input type="date" name="birth_date" class="form-control" value="<?= htmlspecialchars($employee['birth_date'] ?? '') ?>">
+        </div>
         <div class="col-md-3">
             <label class="form-label">Email</label>
             <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($employee['email'] ?? '') ?>">
@@ -49,10 +53,6 @@ $cancelUrl = $cancelUrl ?? '../Pages/employee.php';
         <div class="col-md-4">
             <label class="form-label">Hire date</label>
             <input type="date" name="hire_date" class="form-control" value="<?= htmlspecialchars($employee['hire_date'] ?? '') ?>">
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Birth date</label>
-            <input type="date" name="birth_date" class="form-control" value="<?= htmlspecialchars($employee['birth_date'] ?? '') ?>">
         </div>
         <div class="col-md-4">
             <label class="form-label">Salary</label>
