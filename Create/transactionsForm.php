@@ -21,7 +21,7 @@ include __DIR__ . "/../Controller/transactionsController.php";
         <br>
         <div class="mb-3">
             <label class="form-label">Supplier ID:</label>
-            <input type="text" name="supplier_id" placeholder="Enter supplier ID" required>
+            <input type="text" name="supplier_id" placeholder="e.g. TRX000" required>
         </div>   
         <br>
         <div class="mb-3">
@@ -74,6 +74,11 @@ include __DIR__ . "/../Controller/transactionsController.php";
         <div class="mb-3">
             <label class="form-label">Order Status:</label>
             <input type="text" name="order_status" placeholder="Enter order status" required>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary px-4">Add transaction</button>
+            <a href="../Pages/transactions.php" class="btn btn-outline-secondary ms-2">Cancel</a>
         </div>
         <br>
     </div>

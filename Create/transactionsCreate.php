@@ -10,10 +10,11 @@
         <div class="container mt-4 d-flex justify-content-center" >
             <a href="../Pages/transactions.php" class="btn btn-success mb-3">Return</a>
         </div> 
-        <form method="post" action="../Pages/transactionslist.php?action=store">
+        <form method="post" action="../Pages/transactions.php?action=store">
             <?php include __DIR__ . "/../Models/config.php"; 
             include __DIR__ . "/transactionsForm.php"; ?>
-        <button type="submit" class="btn btn-primary">Add transaction</button>
+</div>
+        </div>
     </form>
     </body>
 </html>

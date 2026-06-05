@@ -32,7 +32,6 @@ class TransactionsController
     private function getFormData(): array
     {
         return [
-            'transaction_id' => $_POST['transaction_id'],
             'transaction_code' => $_POST['transaction_code'],
             'transaction_type' => $_POST['transaction_type'],
             'customer_id' => $_POST['customer_id'],
@@ -47,8 +46,6 @@ class TransactionsController
             'payment_method' => $_POST['payment_method'],
             'payment_status' => $_POST['payment_status'],
             'order_status' => $_POST['order_status'],
-            'created_at' => $_POST['created_at'],
-            'updated_at' => $_POST['updated_at']
         ];
     }
 }
