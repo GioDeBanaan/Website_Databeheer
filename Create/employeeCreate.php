@@ -36,17 +36,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html>
     <head>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-        <title>Create Employee</title>
+        <title>Add new employee</title>
     </head>
     <body>
         <div class="container mt-4">
-            <h1>Create Employee</h1>
+            <h1>Add new employee</h1>
             <?php
                 // Ensure $employee is defined for the form partial
                 $employee = $employee ?? [
                     'first_name'=>'','last_name'=>'','email'=>'','phone'=>'','job_title'=>'','department'=>'','hire_date'=>'','salary'=>'','birth_date'=>'','street'=>'','house_number'=>'','postal_code'=>'','city'=>'','country'=>'','contract_type'=>'','employment_status'=>'','emergency_contact_name'=>'','emergency_contact_phone'=>'','notes'=>''
                 ];
-                $submitLabel = 'Create Employee';
+                $submitLabel = 'Add employee';
                 include __DIR__ . '/employeeForm.php';
             ?>
         </div>
