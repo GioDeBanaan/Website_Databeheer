@@ -27,7 +27,7 @@ include __DIR__ . "/../Controller/customersController.php";
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Gender</label>
-                        <div>
+                        <div class="d-flex flex-column">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="gender" id="genderMale" value="Male" required <?= isset($customer['gender']) && $customer['gender'] === 'Male' ? 'checked' : '' ?>>
                                 <label class="form-check-label" for="genderMale">Male</label>

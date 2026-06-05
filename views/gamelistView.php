@@ -45,8 +45,8 @@
                 <th>Rawg rating</th>
                 <th>Created at</th>
                 <th>Last updated at</th>
-                <th>update</th> 
-                <th>delete</th>
+                <th>Edit</th>
+                <th>Delete</th>
             </tr>
             <?php foreach ($gameresult as $game):?>
                 <tr>

@@ -21,7 +21,7 @@
     // Ik heb hier AS gebruikt omdat ik hier twee names heb eentje voor de genre en de ander voor het platform
     //ik heb hier join gebruik omdat ik van meerdere databases dingen moet halen en op eentje mergen
 
-    $sql = "SELECT employee_id, employee_number, first_name, last_name, email, phone, job_title, department, hire_date, salary, birth_date, street, house_number, postal_code, city, country, contract_type, employment_status, emergency_contact_name, emergency_contact_phone, notes, created_at, updated_at FROM employees ORDER BY employee_id DESC";
+    $sql = "SELECT employee_id,  first_name, last_name, email, phone, job_title, department, hire_date, salary, birth_date, street, house_number, postal_code, city, country, contract_type, employment_status, emergency_contact_name, emergency_contact_phone, notes, created_at, updated_at FROM employees ORDER BY employee_id DESC";
 
     $employeeresult = $conn->query($sql);
 

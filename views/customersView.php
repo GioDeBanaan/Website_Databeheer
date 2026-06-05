@@ -47,7 +47,7 @@
                 <th>Newsletter status</th>
                 <th>Created at</th>
                 <th>Last updated at</th>
-                <th>Update</th>
+                <th>Edit</th>
                 <th>Delete</th>
             </tr>
             <?php foreach ($customerresult as $customer):?>

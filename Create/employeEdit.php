@@ -8,7 +8,7 @@ if (!isset($_GET['employee_id'])) {
 
 $employee_id = (int)$_GET['employee_id'];
 
-$stmt = $conn->prepare('SELECT employee_id, employee_number, first_name, last_name, email, phone, job_title, department, hire_date, salary, birth_date, street, house_number, postal_code, city, country, contract_type, employment_status, emergency_contact_name, emergency_contact_phone, notes FROM employees WHERE employee_id = :employee_id');
+$stmt = $conn->prepare('SELECT employee_id, first_name, last_name, email, phone, job_title, department, hire_date, salary, birth_date, street, house_number, postal_code, city, country, contract_type, employment_status, emergency_contact_name, emergency_contact_phone, notes FROM employees WHERE employee_id = :employee_id');
 $stmt->execute(['employee_id' => $employee_id]);
 $employee = $stmt->fetch(PDO::FETCH_ASSOC);
 
