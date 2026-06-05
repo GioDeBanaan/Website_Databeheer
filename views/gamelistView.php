@@ -31,15 +31,21 @@
                 </li>
             </ul>
         </header>
-        <div class="container mt-4 d-flex justify-content-center" >
-            <a href="../Create/gamelistCreate.php" class="btn btn-success mb-3">Add new game</a>
-        </div>
-        <form method="GET" action="gamelist.php" class="container mb-4">
-            <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Search games..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
-                <button class="btn btn-outline-secondary" type="submit">Search</button>
+        <div class="container mt-4 mb-4">
+            <div class="row">
+                <div class="col-md-8">
+                    <form method="GET" action="gamelist.php">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control" placeholder="Search games..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="../Create/gamelistCreate.php" class="btn btn-success">Add new game</a>
+                </div>
             </div>
-        </form>
+        </div>
         <table class="table table-bordered">
             <tr>
                 <th>Title</th>
