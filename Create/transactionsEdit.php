@@ -24,7 +24,11 @@ if (!isset($transactionresults)) {
         <form method="post" action="../Pages/transactions.php?action=update&id=<?= htmlspecialchars($transaction['transaction_id']) ?>">
             <?php include __DIR__ . "/../Models/config.php"; 
             include __DIR__ . "/transactionsForm.php"; ?>
-        <button type="submit" class="btn btn-primary">Update transaction</button>
+            
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary px-4">Update transaction</button>
+                        <a href="../Pages/transactions.php" class="btn btn-outline-secondary ms-2">Cancel</a>
+                    </div>
     </form>
     </body>
     </html>

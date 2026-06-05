@@ -75,8 +75,10 @@ if (!isset($transactionresults)) {
                     <td><?= htmlspecialchars($transaction["created_at"]) ?></td>
                     <td><?= htmlspecialchars($transaction["updated_at"]) ?></td>
                     <td><a href="../Create/transactionsEdit.php?id=<?= $transaction['transaction_id'] ?>" class="btn btn-primary">Edit</a>
-                    <a href="../Delete/transactiondelete.php?id=<?= $transaction['transaction_id'] ?>" class="btn btn-danger">Delete</a></td>
-                </tr>
+                                    <div class="modal-body">
+                    <img id="deleteImage" src="../mqdefault.jpg" alt="Game Image" class="img-fluid mb-3">
+                    <p>Are you sure you want to delete <strong id="deleteTitle"></strong>?</p>
+                </div>
             <?php endforeach; ?>
         </table>
 
