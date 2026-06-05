@@ -12,8 +12,13 @@
 
         public function index(): void
         {
-            $gameresult = $this->game->all();
-
+            $Searchterm = '';
+            if (isset($_GET['search'])) {
+                $Searchterm = $_GET['search'];
+                $gameresult = $this->game->search($Searchterm);
+            } else {
+                $gameresult = $this->game->all();
+            }
         require __DIR__ . '/../views/gamelistView.php';
         }
 

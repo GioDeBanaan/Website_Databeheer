@@ -34,6 +34,12 @@
         <div class="container mt-4 d-flex justify-content-center" >
             <a href="../Create/gamelistCreate.php" class="btn btn-success mb-3">Add new game</a>
         </div>
+        <form method="GET" action="gamelist.php" class="container mb-4">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Search games..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+                <button class="btn btn-outline-secondary" type="submit">Search</button>
+            </div>
+        </form>
         <table class="table table-bordered">
             <tr>
                 <th>Title</th>
