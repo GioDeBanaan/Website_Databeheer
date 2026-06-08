@@ -41,7 +41,7 @@ include __DIR__ . "/../Controller/customersController.php";
                                 <label class="form-check-label" for="genderOther">Other</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="gender" id="genderPrefer" value="Prefer_not_to_say" required <?= isset($customer['gender']) && $customer['gender'] === 'Prefer_not_to_say' ? 'checked' : '' ?>>
+                                <input class="form-check-input" type="radio" name="gender" id="genderPrefer" value="Prefer not to say" required <?= isset($customer['gender']) && $customer['gender'] === 'Prefer not to say' ? 'checked' : '' ?>>
                                 <label class="form-check-label" for="genderPrefer">Prefer not to say</label>
                             </div>
                         </div>
@@ -71,7 +71,7 @@ include __DIR__ . "/../Controller/customersController.php";
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Postal Code</label>
-                        <input type="text" name="postal_code" class="form-control" placeholder="Enter postal code" required value="<?= htmlspecialchars($customer['postal_code'] ?? '') ?>" pattern="[0-9]{4}\s?[a-zA-Z]{2}" title="Please enter a valid postal code (e.g., 1234 AB)">
+                        <input type="text" name="postal_code" class="form-control" placeholder="Enter postal code" required value="<?= htmlspecialchars($customer['postal_code'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">City</label>
