@@ -1,3 +1,5 @@
+<!-- 08/06/2026 made by: Gio-->
+
 <?php
 require_once __DIR__ . "/config.php";
 
