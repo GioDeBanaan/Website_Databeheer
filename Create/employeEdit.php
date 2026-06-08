@@ -1,5 +1,6 @@
 <?php
-require_once "../Models/config.php";
+require_once __DIR__ . "/../Models/config.php";
+global $conn;
 
 if (!isset($_GET['employee_id'])) {
     header('Location: ../Pages/employee.php');

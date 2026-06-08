@@ -26,7 +26,6 @@ if (!isset($customer)) {
         <form method="post" action="../Pages/customers.php?action=update&id=<?= htmlspecialchars($customer['customer_id']) ?>">
             <?php include __DIR__ . "/../Models/config.php"; 
             include __DIR__ . "/customersForm.php"; ?>
-        <button type="submit" class="btn btn-primary">Update customer</button>
     </form>
     </body>
     </html>

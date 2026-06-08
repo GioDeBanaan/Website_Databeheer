@@ -8,11 +8,18 @@
         {
             $this->customer = new Customer();
         }
-
         public function index(): void
         {
-            $customerresult = $this->customer->all();
-
+            $Searchterm = '';
+            $sort = $_GET['sort'] ?? 'newest';
+            $sort = ($sort === 'oldest') ? 'oldest' : 'newest';
+            
+            if (isset($_GET['search'])) {
+                $Searchterm = $_GET['search'];
+                $customerresult = $this->customer->search($Searchterm);
+            } else {
+                $customerresult = $this->customer->all($sort);
+            }
         require __DIR__ . '/../views/customersView.php';
         }
 
@@ -48,17 +55,21 @@
         private function getFormData(): array
         {
             return [
-                'first_name' => $_POST['first_name'],
-                'last_name' => $_POST['last_name'],
-                'gender' => $_POST['gender'],
-                'date_of_birth' => $_POST['date_of_birth'],
-                'email' => $_POST['email'],
-                'phone' => $_POST['phone'],
-                'street' => $_POST['street'],
-                'house_number' => $_POST['house_number'],
-                'postal_code' => $_POST['postal_code'],
-                'city' => $_POST['city'],
-                'country' => $_POST['country']
+                'first_name' => $_POST['first_name'] ?? null,
+                'last_name' => $_POST['last_name'] ?? null,
+                'gender' => $_POST['gender'] ?? null,
+                'date_of_birth' => $_POST['date_of_birth'] ?? null,
+                'email' => $_POST['email'] ?? null,
+                'phone' => $_POST['phone'] ?? null,
+                'street' => $_POST['street'] ?? null,
+                'house_number' => $_POST['house_number'] ?? null,
+                'postal_code' => $_POST['postal_code'] ?? null,
+                'city' => $_POST['city'] ?? null,
+                'country' => $_POST['country'] ?? null,
+                'registration_date' => $_POST['registration_date'] ?? null,
+                'customer_status' => $_POST['customer_status'] ?? null,
+                'loyalty_points' => $_POST['loyalty_points'] ?? 0,
+                'newsletter_subscribed' => $_POST['newsletter_subscribed'] ?? 0,
             ];
         }
     }

@@ -34,8 +34,10 @@ class Game
             SELECT game_id, platform_id FROM games WHERE platform_id IS NOT NULL");
     }
 
-    public function all(): array
+    public function all(string $sort = 'newest'): array
     {
+        $orderBy = ($sort === 'oldest') ? 'g.created_at ASC' : 'g.created_at DESC';
+        
         $sql = "SELECT g.game_id, g.title, g.description, g.released_at,
                        g.personal_rating,
                        GROUP_CONCAT(DISTINCT ge.name ORDER BY ge.name SEPARATOR ', ') AS genre_names,
@@ -47,7 +49,7 @@ class Game
                 LEFT JOIN game_platforms gp ON g.game_id = gp.game_id
                 LEFT JOIN platforms p ON gp.platform_id = p.platform_id
                 GROUP BY g.game_id, g.title, g.description, g.released_at, g.personal_rating, g.rawg_id, g.rawg_rating, g.created_at, g.updated_at
-                ORDER BY g.game_id DESC";
+                ORDER BY " . $orderBy;
 
         return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -237,6 +239,27 @@ class Game
         }
 
         return isset($data['rating']) ? (float)$data['rating'] : null;
+    }
+
+    public function search(string $Searchterm) : array
+    {
+        $sql = "SELECT g.game_id, g.title, g.description, g.released_at,
+                       g.personal_rating,
+                       GROUP_CONCAT(DISTINCT ge.name ORDER BY ge.name SEPARATOR ', ') AS genre_names,
+                       GROUP_CONCAT(DISTINCT p.name ORDER BY p.name SEPARATOR ', ') AS platform_names,
+                       g.rawg_id, g.rawg_rating, g.created_at, g.updated_at
+                FROM games g
+                LEFT JOIN game_genres gg ON g.game_id = gg.game_id
+                LEFT JOIN genres ge ON gg.genre_id = ge.genre_id
+                LEFT JOIN game_platforms gp ON g.game_id = gp.game_id
+                LEFT JOIN platforms p ON gp.platform_id = p.platform_id
+                WHERE g.title LIKE :Searchterm OR g.description LIKE :Searchterm OR ge.name LIKE :Searchterm OR p.name LIKE :Searchterm OR g.personal_rating LIKE :Searchterm OR g.rawg_rating LIKE :Searchterm
+                GROUP BY g.game_id, g.title, g.description, g.released_at, g.personal_rating, g.rawg_id, g.rawg_rating, g.created_at, g.updated_at
+                ORDER BY g.game_id ASC";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(['Searchterm' => "%" . $Searchterm . "%"]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 

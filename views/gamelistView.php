@@ -8,7 +8,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
         <title> Games </title>
     </head>
-    <body>
+    <body id="top">
         <header class="navbar navbar-expand-lg navbar-light bg-light justify-content-center">
             <ul class=" navbar-nav ">
                 <li class="nav-item">
@@ -31,8 +31,23 @@
                 </li>
             </ul>
         </header>
-        <div class="container mt-4 d-flex justify-content-center" >
-            <a href="../Create/gamelistCreate.php" class="btn btn-success mb-3">Add new game</a>
+        <div class="container mt-4 mb-4">
+            <div class="row">
+                <div class="col-md-8">
+                    <form method="GET" action="gamelist.php">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control" placeholder="Search games..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+                            <input type="hidden" name="sort" value="<?= htmlspecialchars($_GET['sort'] ?? 'newest') ?>">
+                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="gamelist.php?sort=newest" class="btn btn-outline-secondary <?= (($_GET['sort'] ?? 'newest') === 'newest') ? 'active' : '' ?>">Newest</a>
+                    <a href="gamelist.php?sort=oldest" class="btn btn-outline-secondary <?= (($_GET['sort'] ?? 'newest') === 'oldest') ? 'active' : '' ?>">Oldest</a>
+                    <a href="../Create/gamelistCreate.php" class="btn btn-success">Add new game</a>
+                </div>
+            </div>
         </div>
         <table class="table table-bordered">
             <tr>
@@ -101,5 +116,8 @@
             }
         }
     </script>
+    <div class="justify-content-center d-flex mb-4">
+        <a href="#top" class="btn btn-outline-warning scroll-to-top">Back to Top</a>
+    </div>
     </body>
 </html>

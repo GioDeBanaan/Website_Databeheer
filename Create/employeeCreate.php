@@ -1,5 +1,6 @@
 <?php
-require_once "../Models/config.php";
+require_once __DIR__ . "/../Models/config.php";
+global $conn;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = [

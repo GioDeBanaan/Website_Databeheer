@@ -1,53 +1,68 @@
 <?php
     include __DIR__ . "/../Controller/gamelistController.php";
 ?>
-<head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title> Add Game </title>
-</head>
-<body>
-        <div class="container mt-4 d-flex justify-content-center" >
-            <a href="../Pages/gamelist.php" class="btn btn-success mb-3">Return</a>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Title:</label>
-            <div class="input-group">
-                <input type="text" id="title" name="title" class="form-control" placeholder="Enter game title" value="<?= htmlspecialchars($game['title'] ?? '') ?>" required>
-                <button class="btn btn-outline-secondary" type="button" id="searchBtn">Search RAWG</button>
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <title><?= isset($game) ? "Edit Game" : "Add Game" ?></title>
+    </head>
+    <body>
+        <div class="container mt-4">
+            <div class="d-flex justify-content-between mb-3">
+                <a href="../Pages/gamelist.php" class="btn btn-success">Return</a>
             </div>
-        </div>
-        
-        <div class="mb-3" id="searchResults" style="display:none;">
-            <label class="form-label">RAWG Search Results:</label>
-            <div id="resultsContainer" class="border p-3 bg-light" style="max-height: 400px; overflow-y: auto;">
-                <div id="loadingSpinner" class="text-center" style="display:none;">
-                    <span class="spinner-border spinner-border-sm me-2"></span>Searching...
-                </div>
-                <div id="resultsList"></div>
-            </div>
-        </div>
-        <br>
-        <div class="mb-3">
-            <label class="form-label">Description:</label>
-            <input class="form-control" type="text" name="description" placeholder="Enter game description" value="<?= htmlspecialchars($game['description'] ?? '') ?>" required>
-        </div>
-        <br>
-        <div class="mb-3">
-            <label class="form-label">Release Date:</label>
-            <input type="date" name="released_at" min="1950" max="2026" value="<?= htmlspecialchars($game['released_at'] ?? '') ?>" required>
-        </div>
-        <br>
-        <?php
-            $ratingValue = isset($game['personal_rating']) ? number_format((float)$game['personal_rating'], 1, '.', '') : '5.0';
-            $selectedGenres = isset($game['genre_ids']) ? (array) $game['genre_ids'] : [];
-            $selectedPlatforms = isset($game['platform_ids']) ? (array) $game['platform_ids'] : [];
-        ?>
-        <label class="form-label">Personal Rating:</label>
-        <br>
-        <div>
-            <input type="range" id="rating" name="rating" min="1.0" max="10.0" step="0.1" value="<?= $ratingValue ?>" required style="flex: 1;" />
-            <input type="number" id="ratingValue" class="form-control" style="width: 80px;" min="1.0" max="10.0" step="0.1" value="<?= $ratingValue ?>" lang="en-US" />
-        </div>
+            <form method="post" action="">
+                <div class="row gy-3">
+                    <div class="col-12">
+                        <h4 class="mb-3">Game Information</h4>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label">Title</label>
+                        <div class="input-group">
+                            <input type="text" id="title" name="title" class="form-control" placeholder="Enter game title" value="<?= htmlspecialchars($game['title'] ?? '') ?>" required>
+                            <button class="btn btn-outline-secondary" type="button" id="searchBtn">Search RAWG</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Release Date</label>
+                        <input type="date" name="released_at" class="form-control" value="<?= htmlspecialchars($game['released_at'] ?? '') ?>" required>
+                    </div>
+                    <div class="col-12">
+                        <div id="searchResults" style="display:none;">
+                            <label class="form-label">RAWG Search Results:</label>
+                            <div id="resultsContainer" class="border p-3 bg-light mb-3" style="max-height: 400px; overflow-y: auto;">
+                                <div id="loadingSpinner" class="text-center" style="display:none;">
+                                    <span class="spinner-border spinner-border-sm me-2"></span>Searching...
+                                </div>
+                                <div id="resultsList"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" placeholder="Enter game description" required><?= htmlspecialchars($game['description'] ?? '') ?></textarea>
+                    </div>
+                    <div class="col-12 mt-4">
+                        <h4 class="mb-3">Ratings</h4>
+                    </div>
+                    <?php
+                        $ratingValue = isset($game['personal_rating']) ? number_format((float)$game['personal_rating'], 1, '.', '') : '5.0';
+                        $selectedGenres = isset($game['genre_ids']) ? (array) $game['genre_ids'] : [];
+                        $selectedPlatforms = isset($game['platform_ids']) ? (array) $game['platform_ids'] : [];
+                    ?>
+                    <div class="col-md-6">
+                        <label class="form-label">Personal Rating</label>
+                        <div class="d-flex gap-2">
+                            <input type="range" id="rating" name="rating" min="1.0" max="10.0" step="0.1" value="<?= $ratingValue ?>" class="form-range" required />
+                            <input type="number" id="ratingValue" class="form-control" style="width: 100px;" min="1.0" max="10.0" step="0.1" value="<?= $ratingValue ?>" lang="en-US" />
+                        </div>
+                    </div>
+                    <div class="col-12 mt-4">
+                        <h4 class="mb-3">Categories</h4>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Genre:</label>
         <script>
             const ratingSlider = document.getElementById("rating");
             const ratingInput = document.getElementById("ratingValue");
@@ -81,7 +96,6 @@
             });
         </script>
         <div class="mb-3">
-            <label class="form-label">Genre:</label>
             <br>
             <?php
                 $stmt = $conn->prepare("SELECT genre_id, name FROM genres");
@@ -218,8 +232,7 @@
 
             function selectGame(game) {
                 titleInput.value = game.name;
-                
-                // Fill in the release date if available
+         =
                 if (game.released) {
                     const dateInput = document.querySelector('input[name="released_at"]');
                     if (dateInput) {

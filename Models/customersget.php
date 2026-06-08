@@ -11,9 +11,11 @@ class Customer
         $this->conn = $conn;
     }
 
-    public function all(): array
+    public function all(string $sort = 'newest'): array
     {
-            $sql = "SELECT customer_id, first_name, last_name, gender, date_of_birth, email, phone, street, house_number, postal_code, city, country, registration_date, customer_status, loyalty_points, newsletter_subscribed,  created_at, updated_at FROM customers ORDER BY customer_id DESC";
+        $orderBy = ($sort === 'oldest') ? 'created_at ASC' : 'created_at DESC';
+        
+        $sql = "SELECT customer_id, first_name, last_name, gender, date_of_birth, email, phone, street, house_number, postal_code, city, country, registration_date, customer_status, loyalty_points, newsletter_subscribed, created_at, updated_at FROM customers ORDER BY " . $orderBy;
         return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -79,5 +81,13 @@ class Customer
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
 
         return $stmt->execute();
+    }
+        public function search(string $Searchterm) : array
+    {
+        $sql = "SELECT first_name, last_name, date_of_birth, gender, email, phone, street, house_number, postal_code, city, country, registration_date, customer_status, loyalty_points, newsletter_subscribed, created_at, updated_at FROM customers WHERE first_name LIKE :Searchterm OR last_name LIKE :Searchterm OR email LIKE :Searchterm OR city LIKE :Searchterm";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(['Searchterm' => "%" . $Searchterm . "%"]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
