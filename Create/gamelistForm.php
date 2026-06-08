@@ -1,3 +1,4 @@
+<!-- 08/06/2026 made by Kai Hiraki -->
 <?php
     include __DIR__ . "/../Controller/gamelistController.php";
 ?>

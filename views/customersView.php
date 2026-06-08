@@ -1,3 +1,4 @@
+<!-- 08/06/2026 made by Kai Hiraki -->
 <?php
     if (!isset($customerresult)) {
         die("customerresult not passed to view");

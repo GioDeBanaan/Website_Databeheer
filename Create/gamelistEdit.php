@@ -1,3 +1,4 @@
+<!-- 08/06/2026 made by Kai Hiraki -->
 <?php
 require_once __DIR__ . "/../Models/gamelistget.php";
 

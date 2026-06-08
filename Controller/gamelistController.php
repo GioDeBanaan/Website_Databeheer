@@ -1,4 +1,4 @@
-<!-- 33ddc7bd021d4630b707464fe32c531b rawg API key -->
+<!-- 08/06/2026 made by Kai Hiraki -->
 <?php
     require_once __DIR__ . "/../Models/gamelistget.php";
     class GameListController
