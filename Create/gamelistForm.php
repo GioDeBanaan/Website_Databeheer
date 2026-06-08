@@ -233,7 +233,7 @@
 
             function selectGame(game) {
                 titleInput.value = game.name;
-         =
+
                 if (game.released) {
                     const dateInput = document.querySelector('input[name="released_at"]');
                     if (dateInput) {
