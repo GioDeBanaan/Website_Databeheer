@@ -1,6 +1,15 @@
 <?php
-include __DIR__ . "/../Controller/transactionsController.php";
+require_once __DIR__ . "/../Controller/transactionsController.php";
+
+$controller = new TransactionsController();
+
+// Check if the form was submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $controller->store();
+}
 ?>
+
+<form action="" method="POST">
     <div class="container mt-5">
         <div class="mb-3">
             <label class="form-label">Transaction Code:</label>
@@ -9,9 +18,9 @@ include __DIR__ . "/../Controller/transactionsController.php";
         <br>
         <div class="mb-3">
             <label class="form-label">Transaction Type:</label>
-            <input type="radio" name="transaction_type" value="sale" required>Sale</input>
-            <input type="radio" name="transaction_type" value="purchase" required>Purchase</input>
-            <input type="radio" name="transaction_type" value="return" required>Return</input>
+            <input type="radio" name="transaction_type" value="sale" required> Sale
+            <input type="radio" name="transaction_type" value="purchase" required> Purchase
+            <input type="radio" name="transaction_type" value="return" required> Return
         </div>
         <br>
         <div class="mb-3">
@@ -66,9 +75,9 @@ include __DIR__ . "/../Controller/transactionsController.php";
         <br>
         <div class="mb-3">
             <label class="form-label">Payment Status:</label>
-            <input type="radio" name="payment_status" value="Paid" required>Paid</input>
-            <input type="radio" name="payment_status" value="Pending" required>Pending</input>
-            <input type="radio" name="payment_status" value="Failed" required>Failed</input>
+            <input type="radio" name="payment_status" value="paid" required> Paid
+            <input type="radio" name="payment_status" value="pending" required> Pending
+            <input type="radio" name="payment_status" value="failed" required> Failed
         </div>
         <br>
         <div class="mb-3">
@@ -82,3 +91,4 @@ include __DIR__ . "/../Controller/transactionsController.php";
         </div>
         <br>
     </div>
+</form>

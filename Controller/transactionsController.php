@@ -17,35 +17,48 @@ class TransactionsController
 
         require __DIR__ . '/../views/transactionsView.php';
     }
-
-
+  
+public function store(): void
+{
+    $this->transaction->create($this->getFormData());
     
+    header("Location: ../Pages/transactions.php?action=index");
+    exit();
+}
 
-    public function store(): void
-    {
-        $this->transaction->create($this->getFormData());
 
-        header("Location: transactions.php");
-        exit();
+private function getFormData(): array
+{
+    // Debug point: If transaction_code is missing from POST altogether, 
+    // it means the HTML input name attribute does not match.
+    if (!isset($_POST['transaction_code'])) {
+        echo "<pre>CRITICAL: PHP cannot find 'transaction_code' in the submitted form.\n";
+        echo "Here is what PHP actually received:\n";
+        print_r($_POST);
+        echo "</pre>";
+        die();
     }
 
-    private function getFormData(): array
-    {
-        return [
-            'transaction_code' => $_POST['transaction_code'],
-            'transaction_type' => $_POST['transaction_type'],
-            'customer_id' => $_POST['customer_id'],
-            'supplier_id' => $_POST['supplier_id'],
-            'employee_id' => $_POST['employee_id'],
-            'game_id' => $_POST['game_id'],
-            'transaction_date' => $_POST['transaction_date'],
-            'quantity' => $_POST['quantity'],
-            'unit_price' => $_POST['unit_price'],
-            'discount_percent' => $_POST['discount_percent'],
-            'tax_percent' => $_POST['tax_percent'],
-            'payment_method' => $_POST['payment_method'],
-            'payment_status' => $_POST['payment_status'],
-            'order_status' => $_POST['order_status'],
-        ];
-    }
+    return [
+        'transaction_code' => trim($_POST['transaction_code']),
+        'transaction_type' => $_POST['transaction_type'] ?? null,
+        
+        // Ensure IDs are cast to integers or set to null if empty
+        'customer_id'      => !empty($_POST['customer_id']) ? (int)$_POST['customer_id'] : null,
+        'supplier_id'      => !empty($_POST['supplier_id']) ? (int)$_POST['supplier_id'] : null,
+        'employee_id'      => !empty($_POST['employee_id']) ? (int)$_POST['employee_id'] : null,
+        'game_id'          => !empty($_POST['game_id']) ? (int)$_POST['game_id'] : null,
+        
+        'transaction_date' => $_POST['transaction_date'] ?? null,
+        'quantity'         => !empty($_POST['quantity']) ? (int)$_POST['quantity'] : 0,
+        'unit_price'       => $_POST['unit_price'] ?? '0.00',
+        'discount_percent' => $_POST['discount_percent'] ?? '0.00',
+        'tax_percent'      => $_POST['tax_percent'] ?? '0.00',
+        'payment_method'   => $_POST['payment_method'] ?? null,
+        
+        // Clean up text states to ensure lowercase database compatibility
+        'payment_status'   => isset($_POST['payment_status']) ? strtolower(trim($_POST['payment_status'])) : null,
+        'order_status'     => isset($_POST['order_status']) ? strtolower(trim($_POST['order_status'])) : null,
+    ];
+}
 }
