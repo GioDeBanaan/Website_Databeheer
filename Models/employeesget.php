@@ -11,9 +11,11 @@ class Employee
         $this->conn = $conn;
     }
 
-    public function all(): array
+    public function all(string $sort = 'newest'): array
     {
-        $sql = "SELECT employee_id, first_name, last_name, email, phone, job_title, department, hire_date, salary, birth_date, street, house_number, postal_code, city, country, contract_type, employment_status, emergency_contact_name, emergency_contact_phone, notes, created_at, updated_at FROM employees ORDER BY employee_id DESC";
+        $orderBy = ($sort === 'oldest') ? 'created_at ASC' : 'created_at DESC';
+        
+        $sql = "SELECT employee_id, first_name, last_name, email, phone, job_title, department, hire_date, salary, birth_date, street, house_number, postal_code, city, country, contract_type, employment_status, emergency_contact_name, emergency_contact_phone, notes, created_at, updated_at FROM employees ORDER BY " . $orderBy;
         return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 

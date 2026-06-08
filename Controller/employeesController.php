@@ -13,12 +13,14 @@ class EmployeesController
     public function index(): void
     {
         $search = $_GET['search'] ?? '';
+        $sort = $_GET['sort'] ?? 'newest';
+        $sort = ($sort === 'oldest') ? 'oldest' : 'newest';
 
         if (!empty(trim($search))) {
             $employeeresult = $this->employee->search(trim($search));
         } else {
             $search = '';
-            $employeeresult = $this->employee->all();
+            $employeeresult = $this->employee->all($sort);
         }
 
         require __DIR__ . '/../views/employeeView.php';
