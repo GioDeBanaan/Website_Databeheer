@@ -10,7 +10,6 @@
         <form method="post" action="../Pages/customers.php?action=store">
             <?php include __DIR__ . "/../Models/config.php"; 
             include __DIR__ . "/customersForm.php"; ?>
-        <button type="submit" class="btn btn-primary">Add customer</button>
     </form>
     </body>
 </html>

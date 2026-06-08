@@ -125,7 +125,6 @@ include __DIR__ . "/../Controller/customersController.php";
                 </div>
                 <div class="mt-4 d-flex gap-2">
                     <button type="submit" class="btn btn-primary"><?= htmlspecialchars($submitLabel) ?></button>
-                    <a href="<?= htmlspecialchars($cancelUrl) ?>" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>
         </div>
