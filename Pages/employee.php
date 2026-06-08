@@ -1,5 +1,23 @@
 <?php
     require_once "../Models/config.php";
+    
+    // Search logic
+    $search = $_GET['search'] ?? '';
+    $sql = "SELECT * FROM employees";
+    
+    if (!empty($search)) {
+        $sql .= " WHERE first_name LIKE :search OR last_name LIKE :search OR job_title LIKE :search OR street LIKE :search OR postal_code LIKE :search OR city LIKE :search";
+    }
+    
+    $sql .= " ORDER BY employee_id DESC";
+    
+    $stmt = $conn->prepare($sql);
+    if (!empty($search)) {
+        $stmt->execute([':search' => '%' . $search . '%']);
+    } else {
+        $stmt->execute();
+    }
+    $employeeresult = $stmt;
 ?>
 <html>
     <head>
@@ -33,6 +51,14 @@
 <!-- Employee create knop -->
 <div class="d-flex justify-content-center my-4">
     <a href="../Create/employeeCreate.php" class="btn btn-success">Add new employee</a>
+</div>
+
+<!-- Search form -->
+<div class="container mt-4 mb-4">
+    <form method="GET" class="d-flex gap-2">
+        <input type="text" name="search" class="form-control" placeholder="Search by first name, last name, job title, or address" value="<?= htmlspecialchars($search) ?>">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
 </div>
 
 <!-- Employee tabel -->
