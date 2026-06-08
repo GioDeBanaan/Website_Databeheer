@@ -37,11 +37,14 @@
                     <form method="GET" action="gamelist.php">
                         <div class="input-group">
                             <input type="text" name="search" class="form-control" placeholder="Search games..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+                            <input type="hidden" name="sort" value="<?= htmlspecialchars($_GET['sort'] ?? 'newest') ?>">
                             <button class="btn btn-outline-secondary" type="submit">Search</button>
                         </div>
                     </form>
                 </div>
                 <div class="col-md-4 text-end">
+                    <a href="gamelist.php?sort=newest" class="btn btn-outline-secondary <?= (($_GET['sort'] ?? 'newest') === 'newest') ? 'active' : '' ?>">Newest</a>
+                    <a href="gamelist.php?sort=oldest" class="btn btn-outline-secondary <?= (($_GET['sort'] ?? 'newest') === 'oldest') ? 'active' : '' ?>">Oldest</a>
                     <a href="../Create/gamelistCreate.php" class="btn btn-success">Add new game</a>
                 </div>
             </div>

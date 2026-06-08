@@ -11,11 +11,14 @@
         public function index(): void
         {
             $Searchterm = '';
+            $sort = $_GET['sort'] ?? 'newest';
+            $sort = ($sort === 'oldest') ? 'oldest' : 'newest';
+            
             if (isset($_GET['search'])) {
                 $Searchterm = $_GET['search'];
                 $customerresult = $this->customer->search($Searchterm);
             } else {
-                $customerresult = $this->customer->all();
+                $customerresult = $this->customer->all($sort);
             }
         require __DIR__ . '/../views/customersView.php';
         }

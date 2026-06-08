@@ -13,11 +13,14 @@
         public function index(): void
         {
             $Searchterm = '';
+            $sort = $_GET['sort'] ?? 'newest';
+            $sort = ($sort === 'oldest') ? 'oldest' : 'newest';
+            
             if (isset($_GET['search'])) {
                 $Searchterm = $_GET['search'];
                 $gameresult = $this->game->search($Searchterm);
             } else {
-                $gameresult = $this->game->all();
+                $gameresult = $this->game->all($sort);
             }
         require __DIR__ . '/../views/gamelistView.php';
         }
