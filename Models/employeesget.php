@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . "/config.php";
 
+// Simple model for employee database operations
 class Employee
 {
     private PDO $conn;
@@ -13,6 +14,7 @@ class Employee
 
     public function all(string $sort = 'newest'): array
     {
+        // Get all employees ordered by creation date
         $orderBy = ($sort === 'oldest') ? 'created_at ASC' : 'created_at DESC';
         
         $sql = "SELECT employee_id, first_name, last_name, email, phone, job_title, department, hire_date, salary, birth_date, street, house_number, postal_code, city, country, contract_type, employment_status, emergency_contact_name, emergency_contact_phone, notes, created_at, updated_at FROM employees ORDER BY " . $orderBy;
@@ -21,6 +23,7 @@ class Employee
 
     public function find(int $id): ?array
     {
+        // Find one employee by id
         $sql = "SELECT employee_id, first_name, last_name, email, phone, job_title, department, hire_date, salary, birth_date, street, house_number, postal_code, city, country, contract_type, employment_status, emergency_contact_name, emergency_contact_phone, notes, created_at, updated_at FROM employees WHERE employee_id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -32,6 +35,7 @@ class Employee
 
     public function search(string $searchTerm): array
     {
+        // Search employees by name or location fields
         $sql = "SELECT employee_id, first_name, last_name, email, phone, job_title, department, hire_date, salary, birth_date, street, house_number, postal_code, city, country, contract_type, employment_status, emergency_contact_name, emergency_contact_phone, notes, created_at, updated_at FROM employees WHERE first_name LIKE :search OR last_name LIKE :search OR job_title LIKE :search OR street LIKE :search OR postal_code LIKE :search OR city LIKE :search ORDER BY employee_id DESC";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(':search', '%' . $searchTerm . '%', PDO::PARAM_STR);

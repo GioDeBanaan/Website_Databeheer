@@ -1,4 +1,5 @@
 <?php
+// View expects employee results provided by the controller
 if (!isset($employeeresult)) {
     die("employeeresult not passed to view");
 }
@@ -51,6 +52,7 @@ if (!isset($employeeresult)) {
             </div>
         </div>
 
+        <!-- Employee list table -->
         <table class="table table-bordered">
             <tr>
                 <th>Name</th>

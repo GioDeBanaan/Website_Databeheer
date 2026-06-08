@@ -3,6 +3,7 @@ require_once __DIR__ . "/../Models/employeesget.php";
 
 class EmployeesController
 {
+    // Controller handles employee page actions
     private Employee $employee;
 
     public function __construct()
@@ -12,11 +13,13 @@ class EmployeesController
 
     public function index(): void
     {
+        // Show employee list, optionally filtered and sorted
         $search = $_GET['search'] ?? '';
         $sort = $_GET['sort'] ?? 'newest';
         $sort = ($sort === 'oldest') ? 'oldest' : 'newest';
 
         if (!empty(trim($search))) {
+            // Search for matching employees
             $employeeresult = $this->employee->search(trim($search));
         } else {
             $search = '';
@@ -53,6 +56,7 @@ class EmployeesController
 
     private function getFormData(): array
     {
+        // Collect form values from POST data
         return [
             'first_name' => $_POST['first_name'] ?? null,
             'last_name' => $_POST['last_name'] ?? null,
