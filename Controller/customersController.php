@@ -8,11 +8,15 @@
         {
             $this->customer = new Customer();
         }
-
         public function index(): void
         {
-            $customerresult = $this->customer->all();
-
+            $Searchterm = '';
+            if (isset($_GET['search'])) {
+                $Searchterm = $_GET['search'];
+                $customerresult = $this->customer->search($Searchterm);
+            } else {
+                $customerresult = $this->customer->all();
+            }
         require __DIR__ . '/../views/customersView.php';
         }
 

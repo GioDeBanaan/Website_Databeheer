@@ -31,8 +31,20 @@
                 </li>
             </ul>
         </header>
-        <div class="container mt-4 d-flex justify-content-center" >
-            <a href="../Create/customersCreate.php" class="btn btn-success mb-3">Add new customer</a>
+        <div class="container mt-4 mb-4">
+            <div class="row">
+                <div class="col-md-8">
+                    <form method="GET" action="customers.php">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control" placeholder="Search customers..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="../Create/customersCreate.php" class="btn btn-success">Add new customer</a>
+                </div>
+            </div>
         </div>
         <table class="table table-bordered">
             <tr>
@@ -64,7 +76,7 @@
                     <td><?= htmlspecialchars($customer["created_at"]) ?></td>
                     <td><?= htmlspecialchars($customer["updated_at"]) ?></td>
                     <td><a href="../Create/customersEdit.php?id=<?= htmlspecialchars($customer["customer_id"]) ?>" class="btn btn-primary">Edit</a></td>
-                    <td><button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteData(<?= $customer['customer_id'] ?>, '<?= htmlspecialchars($customer['first_name']) ?> <?= htmlspecialchars($customer['last_name']) ?>', '<?= htmlspecialchars($customer['email'] ?? '') ?>')">Delete</button></td>
+                    <td><button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteData(<?= $customer['customer_id'] ?>, '<?= htmlspecialchars(addslashes($customer['first_name'] . ' ' . $customer['last_name'])) ?>', '<?= htmlspecialchars(addslashes($customer['email'] ?? '')) ?>')">Delete</button></td>
                 </tr>
             <?php endforeach; ?>
         </table>

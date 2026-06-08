@@ -80,4 +80,12 @@ class Customer
 
         return $stmt->execute();
     }
+        public function search(string $Searchterm) : array
+    {
+        $sql = "SELECT first_name, last_name, date_of_birth, gender, email, phone, street, house_number, postal_code, city, country, registration_date, customer_status, loyalty_points, newsletter_subscribed, created_at, updated_at FROM customers WHERE first_name LIKE :Searchterm OR last_name LIKE :Searchterm OR email LIKE :Searchterm OR city LIKE :Searchterm";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(['Searchterm' => "%" . $Searchterm . "%"]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
