@@ -8,7 +8,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
         <title> Games </title>
     </head>
-    <body>
+    <body id="top">
         <header class="navbar navbar-expand-lg navbar-light bg-light justify-content-center">
             <ul class=" navbar-nav ">
                 <li class="nav-item">
@@ -116,5 +116,8 @@
             }
         }
     </script>
+    <div class="justify-content-center d-flex mb-4">
+        <a href="#top" class="btn btn-outline-warning scroll-to-top">Back to Top</a>
+    </div>
     </body>
 </html>
