@@ -35,9 +35,10 @@ class Game
             SELECT game_id, platform_id FROM games WHERE platform_id IS NOT NULL");
     }
 
-    public function all(string $sort = 'newest'): array
+    public function all(string $sort = 'newest', int $page = 1, int $perPage = 5): array
     {
         $orderBy = ($sort === 'oldest') ? 'g.created_at ASC' : 'g.created_at DESC';
+        $offset = max(0, ($page - 1) * $perPage);
         
         $sql = "SELECT g.game_id, g.title, g.description, g.released_at,
                        g.personal_rating,
@@ -50,9 +51,26 @@ class Game
                 LEFT JOIN game_platforms gp ON g.game_id = gp.game_id
                 LEFT JOIN platforms p ON gp.platform_id = p.platform_id
                 GROUP BY g.game_id, g.title, g.description, g.released_at, g.personal_rating, g.rawg_id, g.rawg_rating, g.created_at, g.updated_at
-                ORDER BY " . $orderBy;
+                ORDER BY " . $orderBy . "
+                LIMIT :limit OFFSET :offset";
 
-        return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countAll(): int
+    {
+        $sql = "SELECT COUNT(DISTINCT g.game_id) FROM games g
+                LEFT JOIN game_genres gg ON g.game_id = gg.game_id
+                LEFT JOIN genres ge ON gg.genre_id = ge.genre_id
+                LEFT JOIN game_platforms gp ON g.game_id = gp.game_id
+                LEFT JOIN platforms p ON gp.platform_id = p.platform_id";
+
+        return (int) $this->conn->query($sql)->fetchColumn();
     }
 
     public function find(int $id): ?array
@@ -242,8 +260,9 @@ class Game
         return isset($data['rating']) ? (float)$data['rating'] : null;
     }
 
-    public function search(string $Searchterm) : array
+    public function search(string $Searchterm, int $page = 1, int $perPage = 5): array
     {
+        $offset = max(0, ($page - 1) * $perPage);
         $sql = "SELECT g.game_id, g.title, g.description, g.released_at,
                        g.personal_rating,
                        GROUP_CONCAT(DISTINCT ge.name ORDER BY ge.name SEPARATOR ', ') AS genre_names,
@@ -256,11 +275,31 @@ class Game
                 LEFT JOIN platforms p ON gp.platform_id = p.platform_id
                 WHERE g.title LIKE :Searchterm OR g.description LIKE :Searchterm OR ge.name LIKE :Searchterm OR p.name LIKE :Searchterm OR g.personal_rating LIKE :Searchterm OR g.rawg_rating LIKE :Searchterm
                 GROUP BY g.game_id, g.title, g.description, g.released_at, g.personal_rating, g.rawg_id, g.rawg_rating, g.created_at, g.updated_at
-                ORDER BY g.game_id ASC";
+                ORDER BY g.game_id ASC
+                LIMIT :limit OFFSET :offset";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute(['Searchterm' => "%" . $Searchterm . "%"]);
+        $stmt->bindValue(':Searchterm', "%" . $Searchterm . "%", PDO::PARAM_STR);
+        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countSearch(string $Searchterm): int
+    {
+        $sql = "SELECT COUNT(DISTINCT g.game_id)
+                FROM games g
+                LEFT JOIN game_genres gg ON g.game_id = gg.game_id
+                LEFT JOIN genres ge ON gg.genre_id = ge.genre_id
+                LEFT JOIN game_platforms gp ON g.game_id = gp.game_id
+                LEFT JOIN platforms p ON gp.platform_id = p.platform_id
+                WHERE g.title LIKE :Searchterm OR g.description LIKE :Searchterm OR ge.name LIKE :Searchterm OR p.name LIKE :Searchterm OR g.personal_rating LIKE :Searchterm OR g.rawg_rating LIKE :Searchterm";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':Searchterm', "%" . $Searchterm . "%", PDO::PARAM_STR);
+        $stmt->execute();
+        return (int) $stmt->fetchColumn();
     }
 }
 

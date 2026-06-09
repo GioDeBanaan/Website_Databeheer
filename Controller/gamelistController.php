@@ -15,14 +15,23 @@
             $Searchterm = '';
             $sort = $_GET['sort'] ?? 'newest';
             $sort = ($sort === 'oldest') ? 'oldest' : 'newest';
-            
-            if (isset($_GET['search'])) {
-                $Searchterm = $_GET['search'];
-                $gameresult = $this->game->search($Searchterm);
+            $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+            $perPage = 5;
+
+            if (isset($_GET['search']) && trim($_GET['search']) !== '') {
+                $Searchterm = trim($_GET['search']);
+                $totalCount = $this->game->countSearch($Searchterm);
+                $totalPages = max(1, (int) ceil($totalCount / $perPage));
+                $currentPage = min($page, $totalPages);
+                $gameresult = $this->game->search($Searchterm, $currentPage, $perPage);
             } else {
-                $gameresult = $this->game->all($sort);
+                $totalCount = $this->game->countAll();
+                $totalPages = max(1, (int) ceil($totalCount / $perPage));
+                $currentPage = min($page, $totalPages);
+                $gameresult = $this->game->all($sort, $currentPage, $perPage);
             }
-        require __DIR__ . '/../views/gamelistView.php';
+
+            require __DIR__ . '/../views/gamelistView.php';
         }
 
                 public function store(): void
