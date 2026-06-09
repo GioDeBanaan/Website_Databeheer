@@ -3,13 +3,17 @@
     if (!isset($customerresult)) {
         die("customerresult not passed to view");
     }
+    $searchQuery = isset($_GET['search']) && trim($_GET['search']) !== '' ? '&search=' . urlencode(trim($_GET['search'])) : '';
+    $sortParam = htmlspecialchars($_GET['sort'] ?? 'newest');
+    $currentPage = $currentPage ?? 1;
+    $totalPages = $totalPages ?? 1;
 ?>
 <html>
     <head>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
         <title> Customers </title>
     </head>
-    <body id="top">
+    <body>
         <header class="navbar navbar-expand-lg navbar-light bg-light justify-content-center">
             <ul class=" navbar-nav ">
                 <li class="nav-item">
@@ -44,8 +48,8 @@
                     </form>
                 </div>
                 <div class="col-md-4 text-end">
-                    <a href="customers.php?sort=newest" class="btn btn-outline-secondary <?= (($_GET['sort'] ?? 'newest') === 'newest') ? 'active' : '' ?>">Newest</a>
-                    <a href="customers.php?sort=oldest" class="btn btn-outline-secondary <?= (($_GET['sort'] ?? 'newest') === 'oldest') ? 'active' : '' ?>">Oldest</a>
+                    <a href="customers.php?sort=newest<?= $searchQuery ?>" class="btn btn-outline-secondary <?= ($sortParam === 'newest') ? 'active' : '' ?>">Newest</a>
+                    <a href="customers.php?sort=oldest<?= $searchQuery ?>" class="btn btn-outline-secondary <?= ($sortParam === 'oldest') ? 'active' : '' ?>">Oldest</a>
                     <a href="../Create/customersCreate.php" class="btn btn-success">Add new customer</a>
                 </div>
             </div>
@@ -84,6 +88,24 @@
                 </tr>
             <?php endforeach; ?>
         </table>
+
+        <?php if ($totalPages > 1): ?>
+            <nav aria-label="Customer list pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
+                        <a class="page-link" href="customers.php?page=<?= max(1, $currentPage - 1) ?>&sort=<?= $sortParam ?><?= $searchQuery ?>">Previous</a>
+                    </li>
+                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                        <li class="page-item <?= $i === $currentPage ? 'active' : '' ?>">
+                            <a class="page-link" href="customers.php?page=<?= $i ?>&sort=<?= $sortParam ?><?= $searchQuery ?>"><?= $i ?></a>
+                        </li>
+                    <?php endfor; ?>
+                    <li class="page-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
+                        <a class="page-link" href="customers.php?page=<?= min($totalPages, $currentPage + 1) ?>&sort=<?= $sortParam ?><?= $searchQuery ?>">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        <?php endif; ?>
     </div>
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -118,8 +140,5 @@
             }
         }
     </script>
-        <div class="justify-content-center d-flex mb-4">
-        <a href="#top" class="btn btn-outline-warning scroll-to-top">Back to Top</a>
-    </div>
     </body>
 </html>

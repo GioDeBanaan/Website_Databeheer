@@ -14,12 +14,20 @@
             $Searchterm = '';
             $sort = $_GET['sort'] ?? 'newest';
             $sort = ($sort === 'oldest') ? 'oldest' : 'newest';
-            
-            if (isset($_GET['search'])) {
-                $Searchterm = $_GET['search'];
-                $customerresult = $this->customer->search($Searchterm);
+            $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+            $perPage = 5;
+
+            if (isset($_GET['search']) && trim($_GET['search']) !== '') {
+                $Searchterm = trim($_GET['search']);
+                $totalCount = $this->customer->countSearch($Searchterm);
+                $totalPages = max(1, (int) ceil($totalCount / $perPage));
+                $currentPage = min($page, $totalPages);
+                $customerresult = $this->customer->search($Searchterm, $currentPage, $perPage);
             } else {
-                $customerresult = $this->customer->all($sort);
+                $totalCount = $this->customer->countAll();
+                $totalPages = max(1, (int) ceil($totalCount / $perPage));
+                $currentPage = min($page, $totalPages);
+                $customerresult = $this->customer->all($sort, $currentPage, $perPage);
             }
         require __DIR__ . '/../views/customersView.php';
         }
