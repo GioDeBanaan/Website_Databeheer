@@ -14,13 +14,24 @@ class Employee
         $this->conn = $conn;
     }
 
-    public function all(string $sort = 'newest'): array
+    public function all(string $sort = 'newest', int $page = 1, int $perPage = 5): array
     {
-        // Get all employees ordered by creation date
         $orderBy = ($sort === 'oldest') ? 'created_at ASC' : 'created_at DESC';
-        
-        $sql = "SELECT employee_id, first_name, last_name, email, phone, job_title, department, hire_date, salary, birth_date, street, house_number, postal_code, city, country, contract_type, employment_status, emergency_contact_name, emergency_contact_phone, notes, created_at, updated_at FROM employees ORDER BY " . $orderBy;
-        return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        $offset = max(0, ($page - 1) * $perPage);
+
+        $sql = "SELECT employee_id, first_name, last_name, email, phone, job_title, department, hire_date, salary, birth_date, street, house_number, postal_code, city, country, contract_type, employment_status, emergency_contact_name, emergency_contact_phone, notes, created_at, updated_at FROM employees ORDER BY " . $orderBy . " LIMIT :limit OFFSET :offset";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countAll(): int
+    {
+        $sql = "SELECT COUNT(*) FROM employees";
+        return (int) $this->conn->query($sql)->fetchColumn();
     }
 
     public function find(int $id): ?array
@@ -35,15 +46,29 @@ class Employee
         return $employee ?: null;
     }
 
-    public function search(string $searchTerm): array
+    public function search(string $searchTerm, string $sort = 'newest', int $page = 1, int $perPage = 5): array
     {
-        // Search employees by name or location fields
-        $sql = "SELECT employee_id, first_name, last_name, email, phone, job_title, department, hire_date, salary, birth_date, street, house_number, postal_code, city, country, contract_type, employment_status, emergency_contact_name, emergency_contact_phone, notes, created_at, updated_at FROM employees WHERE first_name LIKE :search OR last_name LIKE :search OR job_title LIKE :search OR street LIKE :search OR postal_code LIKE :search OR city LIKE :search ORDER BY employee_id DESC";
+        $orderBy = ($sort === 'oldest') ? 'created_at ASC' : 'created_at DESC';
+        $offset = max(0, ($page - 1) * $perPage);
+
+        $sql = "SELECT employee_id, first_name, last_name, email, phone, job_title, department, hire_date, salary, birth_date, street, house_number, postal_code, city, country, contract_type, employment_status, emergency_contact_name, emergency_contact_phone, notes, created_at, updated_at FROM employees WHERE first_name LIKE :search OR last_name LIKE :search OR job_title LIKE :search OR street LIKE :search OR postal_code LIKE :search OR city LIKE :search ORDER BY " . $orderBy . " LIMIT :limit OFFSET :offset";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':search', '%' . $searchTerm . '%', PDO::PARAM_STR);
+        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countSearch(string $searchTerm): int
+    {
+        $sql = "SELECT COUNT(*) FROM employees WHERE first_name LIKE :search OR last_name LIKE :search OR job_title LIKE :search OR street LIKE :search OR postal_code LIKE :search OR city LIKE :search";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(':search', '%' . $searchTerm . '%', PDO::PARAM_STR);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return (int) $stmt->fetchColumn();
     }
 
     public function create(array $data): int

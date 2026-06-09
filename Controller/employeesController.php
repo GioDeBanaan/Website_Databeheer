@@ -1,3 +1,5 @@
+<!-- 08/06/2026 made by: Gio-->
+
 <?php
 require_once __DIR__ . "/../Models/employeesget.php";
 
@@ -13,17 +15,24 @@ class EmployeesController
 
     public function index(): void
     {
-        // Show employee list, optionally filtered and sorted
         $search = $_GET['search'] ?? '';
         $sort = $_GET['sort'] ?? 'newest';
         $sort = ($sort === 'oldest') ? 'oldest' : 'newest';
+        $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+        $perPage = 5;
 
         if (!empty(trim($search))) {
-            // Search for matching employees
-            $employeeresult = $this->employee->search(trim($search));
+            $search = trim($search);
+            $totalCount = $this->employee->countSearch($search);
+            $totalPages = max(1, (int) ceil($totalCount / $perPage));
+            $currentPage = min($page, $totalPages);
+            $employeeresult = $this->employee->search($search, $sort, $currentPage, $perPage);
         } else {
             $search = '';
-            $employeeresult = $this->employee->all($sort);
+            $totalCount = $this->employee->countAll();
+            $totalPages = max(1, (int) ceil($totalCount / $perPage));
+            $currentPage = min($page, $totalPages);
+            $employeeresult = $this->employee->all($sort, $currentPage, $perPage);
         }
 
         require __DIR__ . '/../views/employeeView.php';

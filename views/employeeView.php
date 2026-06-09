@@ -1,8 +1,15 @@
+<!-- 08/06/2026 made by: Gio-->
+
 <?php
 // View expects employee results provided by the controller
 if (!isset($employeeresult)) {
     die("employeeresult not passed to view");
 }
+
+$searchQuery = isset($_GET['search']) && trim($_GET['search']) !== '' ? '&search=' . urlencode(trim($_GET['search'])) : '';
+$sortParam = htmlspecialchars($_GET['sort'] ?? 'newest');
+$currentPage = $currentPage ?? 1;
+$totalPages = $totalPages ?? 1;
 ?>
 <html>
     <head>
@@ -45,8 +52,8 @@ if (!isset($employeeresult)) {
                     </form>
                 </div>
                 <div class="col-md-4 text-end">
-                    <a href="employee.php?sort=newest" class="btn btn-outline-secondary <?= (($_GET['sort'] ?? 'newest') === 'newest') ? 'active' : '' ?>">Newest</a>
-                    <a href="employee.php?sort=oldest" class="btn btn-outline-secondary <?= (($_GET['sort'] ?? 'newest') === 'oldest') ? 'active' : '' ?>">Oldest</a>
+                    <a href="employee.php?sort=newest<?= $searchQuery ?>" class="btn btn-outline-secondary <?= ($sortParam === 'newest') ? 'active' : '' ?>">Newest</a>
+                    <a href="employee.php?sort=oldest<?= $searchQuery ?>" class="btn btn-outline-secondary <?= ($sortParam === 'oldest') ? 'active' : '' ?>">Oldest</a>
                     <a href="employee.php?action=create" class="btn btn-success">Add new employee</a>
                 </div>
             </div>
@@ -91,5 +98,23 @@ if (!isset($employeeresult)) {
                 </tr>
             <?php endforeach; ?>
         </table>
+
+        <?php if ($totalPages > 1): ?>
+            <nav aria-label="Employee list pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
+                        <a class="page-link" href="employee.php?page=<?= max(1, $currentPage - 1) ?>&sort=<?= $sortParam ?><?= $searchQuery ?>">Previous</a>
+                    </li>
+                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                        <li class="page-item <?= $i === $currentPage ? 'active' : '' ?>">
+                            <a class="page-link" href="employee.php?page=<?= $i ?>&sort=<?= $sortParam ?><?= $searchQuery ?>"><?= $i ?></a>
+                        </li>
+                    <?php endfor; ?>
+                    <li class="page-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
+                        <a class="page-link" href="employee.php?page=<?= min($totalPages, $currentPage + 1) ?>&sort=<?= $sortParam ?><?= $searchQuery ?>">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        <?php endif; ?>
     </body>
 </html>
