@@ -14,6 +14,15 @@ $totalPages = $totalPages ?? 1;
 <html>
     <head>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            .address-link {
+                color: #0d6efd;
+                text-decoration: none;
+            }
+            .address-link:hover {
+                text-decoration: underline;
+            }
+        </style>
         <title>Employees</title>
     </head>
     <body>
@@ -86,7 +95,8 @@ $totalPages = $totalPages ?? 1;
                     <td class="text-nowrap"><?= htmlspecialchars($row['hire_date']) ?></td>
                     <td>€<?= htmlspecialchars($row['salary']) ?></td>
                     <td class="text-nowrap"><?= htmlspecialchars($row['birth_date']) ?></td>
-                    <td class="text-nowrap"><?= htmlspecialchars($row['street'] . ' ' . $row['house_number']) ?><br><?= htmlspecialchars($row['postal_code']) ?><br><small class="text-muted"><?= htmlspecialchars($row['city']) ?></small></td>
+                    <?php $mapQueryRaw = $row['street'] . ' ' . $row['house_number'] . ', ' . $row['postal_code'] . ' ' . $row['city']; ?>
+                    <td class="text-nowrap"><a href="#" class="address-link" data-query="<?= htmlspecialchars($mapQueryRaw) ?>"><?= htmlspecialchars($row['street'] . ' ' . $row['house_number']) ?><br><?= htmlspecialchars($row['postal_code']) ?><br><small class="text-muted"><?= htmlspecialchars($row['city']) ?></small></a></td>
                     <td><?= htmlspecialchars($row['contract_type']) ?></td>
                     <td><?= htmlspecialchars($row['employment_status']) ?></td>
                     <td class="text-nowrap"><?= htmlspecialchars($row['emergency_contact_name']) ?><br><?= htmlspecialchars($row['emergency_contact_phone']) ?></td>
@@ -99,6 +109,7 @@ $totalPages = $totalPages ?? 1;
             <?php endforeach; ?>
         </table>
 
+        <!-- Pagination -->
         <?php if ($totalPages > 1): ?>
             <nav aria-label="Employee list pagination">
                 <ul class="pagination justify-content-center">
@@ -116,5 +127,46 @@ $totalPages = $totalPages ?? 1;
                 </ul>
             </nav>
         <?php endif; ?>
+
+        <!-- MAP LOCATION -->
+
+        <div class="modal fade" id="mapModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Employee Location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <div id="map" style="height:500px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
     </body>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var mapModalEl = document.getElementById('mapModal');
+            var mapContainer = document.getElementById('map');
+            if (!mapModalEl || !mapContainer) return;
+             var mapModal = new bootstrap.Modal(mapModalEl);
+
+            document.querySelectorAll('.address-link').forEach(function(el){
+            el.addEventListener('click', function(e){
+            e.preventDefault();
+            var q = el.getAttribute('data-query') || '';
+            var src = 'https://www.google.com/maps?q=' + encodeURIComponent(q) + '&output=embed';
+            mapContainer.innerHTML = '<iframe src="' + src + '" width="100%" height="100%" style="border:0; min-height:500px;" allowfullscreen="" loading="lazy"></iframe>';
+            mapModal.show();
+            });
+                });
+
+            mapModalEl.addEventListener('hidden.bs.modal', function () {
+            mapContainer.innerHTML = '';
+                });
+            });
+    </script>
 </html>
