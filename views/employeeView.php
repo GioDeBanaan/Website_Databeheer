@@ -104,10 +104,43 @@ $totalPages = $totalPages ?? 1;
                     <td><?= htmlspecialchars($row['created_at']) ?></td>
                     <td><?= htmlspecialchars($row['updated_at']) ?></td>
                     <td><a href="employee.php?action=edit&id=<?= $row['employee_id'] ?>" class="btn btn-primary">Edit</a></td>
-                    <td><a href="../Delete/employeeDelete.php?employee_id=<?= $row['employee_id'] ?>" class="btn btn-danger" onclick="return confirm('Weet je zeker dat je deze werknemer wilt verwijderen?');">Delete</a></td>
+                    <td><button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteData(<?= $row['employee_id'] ?>, '<?= htmlspecialchars(addslashes($row['first_name'] . ' ' . $row['last_name'])) ?>', '<?= htmlspecialchars(addslashes($row['email'] ?? '')) ?>')">Delete</button></td>
                 </tr>
-            <?php endforeach; ?>
-        </table>
+    <?php endforeach; ?>
+</table>
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="deleteImage" src="../mqdefault.jpg" alt="Game Image" class="img-fluid mb-3">
+                    <p>Are you sure you want to delete <strong id="deleteTitle"></strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let deleteEmployeeId = null;
+
+        function setDeleteData(employeeId, employeeTitle) {
+            deleteEmployeeId = employeeId;
+            document.getElementById('deleteTitle').textContent = employeeTitle;
+        }
+
+        function confirmDelete() {
+            if (deleteEmployeeId) {
+                window.location.href = '../Delete/employeeDelete.php?id=' + deleteEmployeeId;
+            }
+        }
+    </script>
 
         <!-- Pagination -->
         <?php if ($totalPages > 1): ?>
