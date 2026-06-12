@@ -94,7 +94,6 @@ public function create(array $data): void
 
     $stmt->execute();
 
-    return (int)$this->conn->lastInsertId();
 }
  
 
