@@ -1,7 +1,10 @@
+<!-- 08/06/2026 made by: Gio-->
+
 <?php
 require_once __DIR__ . "/../Models/config.php";
 global $conn;
 
+// Requires employee id to edit
 if (!isset($_GET['employee_id'])) {
     header('Location: ../Pages/employee.php');
     exit;
@@ -45,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $update = $conn->prepare('UPDATE employees SET first_name = :first_name, last_name = :last_name, email = :email, phone = :phone, job_title = :job_title, department = :department, hire_date = :hire_date, salary = :salary, birth_date = :birth_date, street = :street, house_number = :house_number, postal_code = :postal_code, city = :city, country = :country, contract_type = :contract_type, employment_status = :employment_status, emergency_contact_name = :emergency_contact_name, emergency_contact_phone = :emergency_contact_phone, notes = :notes, updated_at = NOW() WHERE employee_id = :employee_id');
     $update->execute($data);
 
+    // After saving, return to employee list
     header('Location: ../Pages/employee.php');
     exit;
 }
@@ -60,7 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <h1>Edit Employee</h1>
             <?php
                 $submitLabel = 'Save changes';
-                include __DIR__ . '/employeeForm.php';
+            // Include the shared employee form partial
+            include __DIR__ . '/employeeForm.php';
             ?>
         </div>
     </body>

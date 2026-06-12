@@ -1,3 +1,4 @@
+<!-- 08/06/2026 made by Kai Hiraki -->
 <?php
     include __DIR__ . "/../Controller/gamelistController.php";
 ?>
@@ -232,7 +233,7 @@
 
             function selectGame(game) {
                 titleInput.value = game.name;
-         =
+
                 if (game.released) {
                     const dateInput = document.querySelector('input[name="released_at"]');
                     if (dateInput) {

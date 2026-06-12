@@ -2,6 +2,7 @@
 require_once __DIR__ . "/../Models/config.php";
 global $conn;
 
+// Handle employee creation form submit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = [
         'first_name' => trim($_POST['first_name'] ?? ''),
@@ -28,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $insert = $conn->prepare('INSERT INTO employees (first_name, last_name, email, phone, job_title, department, hire_date, salary, birth_date, street, house_number, postal_code, city, country, contract_type, employment_status, emergency_contact_name, emergency_contact_phone, notes) VALUES (:first_name, :last_name, :email, :phone, :job_title, :department, :hire_date, :salary, :birth_date, :street, :house_number, :postal_code, :city, :country, :contract_type, :employment_status, :emergency_contact_name, :emergency_contact_phone, :notes)');
     $insert->execute($data);
 
+    // Redirect back to employee page after successful insert
     header('Location: ../Pages/employee.php');
     exit;
 }

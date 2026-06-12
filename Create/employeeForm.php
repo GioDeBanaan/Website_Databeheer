@@ -1,3 +1,5 @@
+<!-- 08/06/2026 made by: Gio-->
+
 <?php
 $submitLabel = $submitLabel ?? 'Save';
 $cancelUrl = $cancelUrl ?? '../Pages/employee.php';
@@ -7,6 +9,7 @@ $cancelUrl = $cancelUrl ?? '../Pages/employee.php';
         <div class="col-12">
             <h4 class="mb-3">Personal and Contact Information</h4>
         </div>
+        <!-- Personal fields -->
         <div class="col-md-3">
             <label class="form-label">First name</label>
             <input type="text" name="first_name" class="form-control" value="<?= htmlspecialchars($employee['first_name'] ?? '') ?>" required>
@@ -31,6 +34,7 @@ $cancelUrl = $cancelUrl ?? '../Pages/employee.php';
         <div class="col-12 mt-4">
             <h4 class="mb-3">Work Data</h4>
         </div>
+        <!-- Work-related fields -->
         <div class="col-md-3">
             <label class="form-label">Job title</label>
             <input type="text" name="job_title" class="form-control" value="<?= htmlspecialchars($employee['job_title'] ?? '') ?>">
@@ -62,6 +66,7 @@ $cancelUrl = $cancelUrl ?? '../Pages/employee.php';
         <div class="col-12 mt-4">
             <h4 class="mb-3">Address</h4>
         </div>
+        <!-- Employee address fields -->
         <div class="col-md-6">
             <label class="form-label">Street</label>
             <input type="text" name="street" class="form-control" value="<?= htmlspecialchars($employee['street'] ?? '') ?>">
@@ -86,6 +91,7 @@ $cancelUrl = $cancelUrl ?? '../Pages/employee.php';
         <div class="col-12 mt-4">
             <h4 class="mb-3">Emergency Contact</h4>
         </div>
+        <!-- Emergency contact fields -->
         <div class="col-md-6">
             <label class="form-label">Emergency contact name</label>
             <input type="text" name="emergency_contact_name" class="form-control" value="<?= htmlspecialchars($employee['emergency_contact_name'] ?? '') ?>">

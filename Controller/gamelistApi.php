@@ -1,4 +1,5 @@
 <?php
+// 08/06/2026 made by Kai Hiraki
 require_once __DIR__ . '/../Models/config.php';
 
 header('Content-Type: text/html; charset=utf-8');
@@ -28,13 +29,22 @@ function searchRawgGames(string $query, string $apiKey): array
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlErrNo = curl_errno($ch);
+    $curlErr = curl_error($ch);
     curl_close($ch);
     
-    if ($response === false) {
-        return ['error' => 'Failed to connect to RAWG API', 'results' => []];
+    if ($curlErrNo) {
+        return ['error' => 'cURL error: ' . $curlErr, 'results' => []];
+    }
+    
+    if ($httpCode < 200 || $httpCode >= 300) {
+        $decoded = json_decode($response, true);
+        $msg = $decoded['detail'] ?? $decoded['message'] ?? $response;
+        return ['error' => 'RAWG API returned HTTP ' . $httpCode . ': ' . $msg, 'results' => []];
     }
     
     $data = json_decode($response, true);
@@ -44,7 +54,7 @@ function searchRawgGames(string $query, string $apiKey): array
     
     return [
         'results' => $data['results'] ?? [],
-        'count' => $data['count'] ?? 0
+        'count' => $data['count'] ?? (isset($data['results']) ? count($data['results']) : 0)
     ];
 }
 
@@ -54,14 +64,24 @@ function fetchRawgRating(string $title, string $apiKey): ?string
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
     $response = curl_exec($ch);
-    if ($response === false) {
+    $curlErrNo = curl_errno($ch);
+    $curlErr = curl_error($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    if ($curlErrNo) {
         curl_close($ch);
         return null;
     }
 
     curl_close($ch);
+
+    if ($httpCode < 200 || $httpCode >= 300) {
+        return null;
+    }
+
     $data = json_decode($response, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
         return null;

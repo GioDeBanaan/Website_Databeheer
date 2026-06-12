@@ -1,3 +1,4 @@
+<!-- 08/06/2026 made by Kai Hiraki -->
 <?php
 require_once __DIR__ . "/config.php";
 
@@ -11,12 +12,23 @@ class Customer
         $this->conn = $conn;
     }
 
-    public function all(string $sort = 'newest'): array
+    public function all(string $sort = 'newest', int $page = 1, int $perPage = 5): array
     {
         $orderBy = ($sort === 'oldest') ? 'created_at ASC' : 'created_at DESC';
-        
-        $sql = "SELECT customer_id, first_name, last_name, gender, date_of_birth, email, phone, street, house_number, postal_code, city, country, registration_date, customer_status, loyalty_points, newsletter_subscribed, created_at, updated_at FROM customers ORDER BY " . $orderBy;
-        return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        $offset = max(0, ($page - 1) * $perPage);
+
+        $sql = "SELECT customer_id, first_name, last_name, gender, date_of_birth, email, phone, street, house_number, postal_code, city, country, registration_date, customer_status, loyalty_points, newsletter_subscribed, created_at, updated_at FROM customers ORDER BY " . $orderBy . " LIMIT :limit OFFSET :offset";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countAll(): int
+    {
+        $sql = "SELECT COUNT(*) FROM customers";
+        return (int)$this->conn->query($sql)->fetchColumn();
     }
 
     public function find(int $id): ?array
@@ -82,12 +94,26 @@ class Customer
 
         return $stmt->execute();
     }
-        public function search(string $Searchterm) : array
+        public function search(string $Searchterm, int $page = 1, int $perPage = 5) : array
     {
-        $sql = "SELECT first_name, last_name, date_of_birth, gender, email, phone, street, house_number, postal_code, city, country, registration_date, customer_status, loyalty_points, newsletter_subscribed, created_at, updated_at FROM customers WHERE first_name LIKE :Searchterm OR last_name LIKE :Searchterm OR email LIKE :Searchterm OR city LIKE :Searchterm";
+        $offset = max(0, ($page - 1) * $perPage);
+        $sql = "SELECT customer_id, first_name, last_name, date_of_birth, gender, email, phone, street, house_number, postal_code, city, country, registration_date, customer_status, loyalty_points, newsletter_subscribed, created_at, updated_at FROM customers WHERE first_name LIKE :Searchterm OR last_name LIKE :Searchterm OR email LIKE :Searchterm OR city LIKE :Searchterm ORDER BY created_at DESC LIMIT :limit OFFSET :offset";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute(['Searchterm' => "%" . $Searchterm . "%"]);
+        $stmt->bindValue(':Searchterm', "%" . $Searchterm . "%", PDO::PARAM_STR);
+        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countSearch(string $Searchterm): int
+    {
+        $sql = "SELECT COUNT(*) FROM customers WHERE first_name LIKE :Searchterm OR last_name LIKE :Searchterm OR email LIKE :Searchterm OR city LIKE :Searchterm";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':Searchterm', "%" . $Searchterm . "%", PDO::PARAM_STR);
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
     }
 }

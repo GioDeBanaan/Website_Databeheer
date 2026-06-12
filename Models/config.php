@@ -1,4 +1,5 @@
 <?php
+// 08/06/2026 made by Kai Hiraki
 
     $host = "panel.nietmeerleuk.me";
     $dbname = "database-school";
