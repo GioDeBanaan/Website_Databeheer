@@ -66,7 +66,7 @@ Website_Databeheer/
 ## Contributors
 
 - [Gio R.](https://github.com/GioDeBanaan)
-- [Kai H.](https://github.com/KaiHiraki)
+- [Kai H.](https://github.com/halloman123)
 - [Kacper R.](https://github.com/kacperrejowski)
 - [Sam S.](https://github.com/rikkert-cfx)
 
