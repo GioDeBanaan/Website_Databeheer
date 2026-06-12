@@ -8,6 +8,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $controller->store();
 }
 ?>
+        <title>Add Transaction</title>
+    </head>
+    <body>
+        <form method="POST" action="../Pages/transactions.php?action=store">
+            <div class="container mt-4 d-flex justify-content-center">
+                <a href="../Pages/transactions.php" class="btn btn-success mb-3">Return</a>
+            </div>
 
 <form action="" method="POST">
     <div class="container mt-5">
@@ -25,22 +32,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <br>
         <div class="mb-3">
             <label class="form-label">Customer:</label>
-            <input type="text" name="customer_id" placeholder="Enter customer ID" required>
+            <input type="text" name="customer_name" placeholder="Enter customer name" required>
         </div>
         <br>
         <div class="mb-3">
-            <label class="form-label">Supplier ID:</label>
-            <input type="text" name="supplier_id" placeholder="e.g. TRX000" required>
+            <label class="form-label">Company:</label>
+            <input type="text" name="Company" placeholder="Enter Company's name" required>
         </div>   
         <br>
         <div class="mb-3">
-            <label class="form-label">Employee ID:</label>
-            <input type="text" name="employee_id" placeholder="Enter employee ID" required>
-        </div>
-        <br>
-        <div class="mb-3">
-            <label class="form-label">Game ID:</label>
-            <input type="text" name="game_id" placeholder="Enter game ID" required>
+            <label class="form-label">Game name</label>
+            <input type="text" name="game_name" placeholder="Enter game name" required>
         </div>
         <br>
         <div class="mb-3">

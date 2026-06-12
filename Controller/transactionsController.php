@@ -41,11 +41,9 @@ private function getFormData(): array
         'transaction_code' => trim($_POST['transaction_code']),
         'transaction_type' => $_POST['transaction_type'] ?? null,
         
-        // Ensure IDs are cast to integers or set to null if empty
-        'customer_id'      => !empty($_POST['customer_id']) ? (int)$_POST['customer_id'] : null,
-        'supplier_id'      => !empty($_POST['supplier_id']) ? (int)$_POST['supplier_id'] : null,
-        'employee_id'      => !empty($_POST['employee_id']) ? (int)$_POST['employee_id'] : null,
-        'game_id'          => !empty($_POST['game_id']) ? (int)$_POST['game_id'] : null,
+        'customer_name'      => !empty($_POST['customer_name']) ? (int)$_POST['customer_name'] : null,
+        'company'      => !empty($_POST['company']) ? (int)$_POST['company'] : null,
+        'game_id'          => !empty($_POST['game_name']) ? (int)$_POST['game_name'] : null,
         
         'transaction_date' => $_POST['transaction_date'] ?? null,
         'quantity'         => !empty($_POST['quantity']) ? (int)$_POST['quantity'] : 0,
@@ -53,8 +51,7 @@ private function getFormData(): array
         'discount_percent' => $_POST['discount_percent'] ?? '0.00',
         'tax_percent'      => $_POST['tax_percent'] ?? '0.00',
         'payment_method'   => $_POST['payment_method'] ?? null,
-        
-        // Clean up text states to ensure lowercase database compatibility
+
         'payment_status'   => isset($_POST['payment_status']) ? strtolower(trim($_POST['payment_status'])) : null,
         'order_status'     => isset($_POST['order_status']) ? strtolower(trim($_POST['order_status'])) : null,
     ];
