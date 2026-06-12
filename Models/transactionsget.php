@@ -74,11 +74,10 @@ class Transaction
 
     public function create(array $data): int
     {
-        $sql = "INSERT INTO transactions (transaction_code, transaction_type, customer_name, company, game_name, transaction_date, quantity, unit_price, discount_percent, tax_percent, payment_method, payment_status, order_status, created_at, updated_at)
-                VALUES (:transaction_code, :transaction_type, :customer_name, :company, :game_name, :transaction_date, :quantity, :unit_price, :discount_percent, :tax_percent, :payment_method, :payment_status, :order_status, NOW(), NOW())";
+        $sql = "INSERT INTO transactions (transaction_type, customer_name, company, game_name, transaction_date, quantity, unit_price, discount_percent, tax_percent, payment_method, payment_status, order_status, created_at, updated_at)
+                VALUES (:transaction_type, :customer_name, :company, :game_name, :transaction_date, :quantity, :unit_price, :discount_percent, :tax_percent, :payment_method, :payment_status, :order_status, NOW(), NOW())";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(':transaction_code', $data['transaction_code'] ?? null, PDO::PARAM_STR);
         $stmt->bindValue(':transaction_type', $data['transaction_type'] ?? null, PDO::PARAM_STR);
         $stmt->bindValue(':customer_name', $data['customer_name'] ?? null, PDO::PARAM_STR);
         // Fixed case-sensitivity issue: changing $data['Company'] to $data['company'] matches standard form naming rules
@@ -100,10 +99,9 @@ class Transaction
 
     public function update(int $id, array $data): bool
     {
-        $sql = "UPDATE transactions SET transaction_code = :transaction_code, transaction_type = :transaction_type, customer_name = :customer_name, company = :company, game_name = :game_name, transaction_date = :transaction_date, quantity = :quantity, unit_price = :unit_price, discount_percent = :discount_percent, tax_percent = :tax_percent, payment_method = :payment_method, payment_status = :payment_status, order_status = :order_status, updated_at = NOW() WHERE transaction_id = :id";
+        $sql = "UPDATE transactions SET transaction_type = :transaction_type, customer_name = :customer_name, company = :company, game_name = :game_name, transaction_date = :transaction_date, quantity = :quantity, unit_price = :unit_price, discount_percent = :discount_percent, tax_percent = :tax_percent, payment_method = :payment_method, payment_status = :payment_status, order_status = :order_status, updated_at = NOW() WHERE transaction_id = :id";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(':transaction_code', $data['transaction_code'] ?? null, PDO::PARAM_STR);
         $stmt->bindValue(':transaction_type', $data['transaction_type'] ?? null, PDO::PARAM_STR);
         $stmt->bindValue(':customer_name', $data['customer_name'] ?? null, PDO::PARAM_STR);
         $stmt->bindValue(':company', $data['company'] ?? $data['Company'] ?? null, PDO::PARAM_STR);

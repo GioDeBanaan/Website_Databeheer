@@ -44,8 +44,7 @@ $sql = "SELECT  supplier_id, supplier_code, company_name, contact_person, email,
     $supplierresult = $conn->query($sql);
 // Fully corrected transaction query: matches customer_name, company, and game_name
     $sql = "SELECT 
-                t.transaction_id, 
-                t.transaction_code, 
+                t.transaction_id,  
                 t.transaction_type, 
                 t.customer_name, 
                 s.company_name AS company_name, 

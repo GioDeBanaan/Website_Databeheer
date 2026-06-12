@@ -19,11 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <form action="" method="POST">
     <div class="container mt-5">
         <div class="mb-3">
-            <label class="form-label">Transaction Code:</label>
-            <input type="text" name="transaction_code" placeholder="Enter transaction code" required>
-        </div>
-        <br>
-        <div class="mb-3">
             <label class="form-label">Transaction Type:</label>
             <input type="radio" name="transaction_type" value="sale" required> Sale
             <input type="radio" name="transaction_type" value="purchase" required> Purchase

@@ -38,8 +38,6 @@ if (!isset($transactionresults)) {
 
             <table class="table table-bordered">
             <tr>
-                <th>Transaction id</th>
-                <th>Transaction code</th>
                 <th>Transaction type</th>
                 <th>Customer Name</th>
                 <th>Company</th>
@@ -59,8 +57,6 @@ if (!isset($transactionresults)) {
             </tr>
             <?php foreach ($transactionresults as $transaction):?>
                 <tr>
-                    <td><?= htmlspecialchars($transaction["transaction_id"]) ?></td>
-                    <td><?= htmlspecialchars($transaction["transaction_code"]) ?></td>
                     <td><?= htmlspecialchars($transaction["transaction_type"]) ?></td>
                     <td><?= htmlspecialchars($transaction["customer_name"]) ?></td>
                     <td><?= htmlspecialchars($transaction["company"]) ?></td>
