@@ -72,7 +72,7 @@ if (!isset($transactionresults)) {
                     <td><?= htmlspecialchars($transaction["created_at"]) ?></td>
                     <td><?= htmlspecialchars($transaction["updated_at"]) ?></td>
                     <td><a href="../Create/transactionsEdit.php?id=<?= $transaction['transaction_id'] ?>" class="btn btn-primary">Edit</a>
-                    <td><button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteData(<?= $transaction['transaction_id'] ?>, '<?= htmlspecialchars(addslashes($transaction['transaction_code'])) ?>')">Delete</button></td>
+                    <td><button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteData(<?= $transaction['transaction_id'] ?>, '<?= htmlspecialchars(addslashes($transaction['transaction_type'])) ?>')">Delete</button></td>
                 </tr>
             <?php endforeach; ?>
         </table>

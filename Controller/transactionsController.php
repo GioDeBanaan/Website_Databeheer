@@ -29,8 +29,8 @@ public function store(): void
 
 private function getFormData(): array
 {
-    if (!isset($_POST['transaction_code'])) {
-        echo "<pre>CRITICAL: PHP cannot find 'transaction_code' in the submitted form.\n";
+    if (!isset($_POST['transaction_type'])) {
+        echo "<pre>CRITICAL: PHP cannot find 'transaction_type' in the submitted form.\n";
         echo "Here is what PHP actually received:\n";
         print_r($_POST);
         echo "</pre>";
@@ -38,7 +38,6 @@ private function getFormData(): array
     }
 
     return [
-        'transaction_code' => trim($_POST['transaction_code']),
         'transaction_type' => $_POST['transaction_type'] ?? null,
         
         'customer_name'      => !empty($_POST['customer_name']) ? (int)$_POST['customer_name'] : null,
