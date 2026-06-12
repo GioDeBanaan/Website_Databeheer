@@ -119,7 +119,8 @@
                         <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body text-center">
+                        <img src="../are-you-sure.gif" alt="Supplier Image" class="img-fluid mb-3">
                         <p>Are you sure you want to delete <strong id="deleteTitle"></strong>?</p>
                     </div>
                     <div class="modal-footer">
