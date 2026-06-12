@@ -1,85 +1,92 @@
-<!-- 08/06/2026 made by Kai Hiraki -->
 <?php
-    require_once __DIR__ . "/../Models/customersget.php";
-    class CustomersController
+require_once __DIR__ . "/../Models/suppliersget.php";
+
+class SuppliersController
+{
+    private Suppliers $Suppliers;
+
+    public function __construct()
     {
-        private Customer $customer;
-
-        public function __construct()
-        {
-            $this->customer = new Customer();
-        }
-        public function index(): void
-        {
-            $Searchterm = '';
-            $sort = $_GET['sort'] ?? 'newest';
-            $sort = ($sort === 'oldest') ? 'oldest' : 'newest';
-            $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
-            $perPage = 5;
-
-            if (isset($_GET['search']) && trim($_GET['search']) !== '') {
-                $Searchterm = trim($_GET['search']);
-                $totalCount = $this->customer->countSearch($Searchterm);
-                $totalPages = max(1, (int) ceil($totalCount / $perPage));
-                $currentPage = min($page, $totalPages);
-                $customerresult = $this->customer->search($Searchterm, $currentPage, $perPage);
-            } else {
-                $totalCount = $this->customer->countAll();
-                $totalPages = max(1, (int) ceil($totalCount / $perPage));
-                $currentPage = min($page, $totalPages);
-                $customerresult = $this->customer->all($sort, $currentPage, $perPage);
-            }
-        require __DIR__ . '/../views/customersView.php';
-        }
-
-        public function create(): void
-        {
-            require __DIR__ .'/../create/customersCreate.php';
-        }
-
-        public function store(): void
-        {
-            $this->customer->create($this->getFormData());
-            header("Location: customers.php");
-            exit();
-        }
-
-        public function edit(int $id): void
-        {
-            $customer = $this->customer->find($id);
-            if (!$customer) {
-                die("Customer not found");
-            }
-
-            require __DIR__ . '/../Create/customersEdit.php';
-        }
-
-        public function update(int $id): void
-        {
-            $this->customer->update($id, $this->getFormData());
-            header("Location: customers.php");
-            exit();
-        }
-
-        private function getFormData(): array
-        {
-            return [
-                'first_name' => $_POST['first_name'] ?? null,
-                'last_name' => $_POST['last_name'] ?? null,
-                'gender' => $_POST['gender'] ?? null,
-                'date_of_birth' => $_POST['date_of_birth'] ?? null,
-                'email' => $_POST['email'] ?? null,
-                'phone' => $_POST['phone'] ?? null,
-                'street' => $_POST['street'] ?? null,
-                'house_number' => $_POST['house_number'] ?? null,
-                'postal_code' => $_POST['postal_code'] ?? null,
-                'city' => $_POST['city'] ?? null,
-                'country' => $_POST['country'] ?? null,
-                'registration_date' => $_POST['registration_date'] ?? null,
-                'customer_status' => $_POST['customer_status'] ?? null,
-                'loyalty_points' => $_POST['loyalty_points'] ?? 0,
-                'newsletter_subscribed' => $_POST['newsletter_subscribed'] ?? 0,
-            ];
-        }
+        $this->Suppliers = new Suppliers();
     }
+
+    public function index(string $sort = 'supplier_id', string $order = 'DESC'): void
+    {
+        die(var_dump($_GET['search'] ?? 'LEEG'));
+        $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+        $perPage = 10;
+
+        if (isset($_GET['search']) && trim($_GET['search']) !== '') {
+            $searchterm = trim($_GET['search']);
+            $totalCount = $this->Suppliers->countSearch($searchterm);
+            $totalPages = max(1, (int) ceil($totalCount / $perPage));
+            $currentPage = min($page, $totalPages);
+            $Suppliersresult = $this->Suppliers->search($searchterm, $sort, $order, $currentPage, $perPage);
+        } else {
+            $totalCount = $this->Suppliers->countAll();
+            $totalPages = max(1, (int) ceil($totalCount / $perPage));
+            $currentPage = min($page, $totalPages);
+            $Suppliersresult = $this->Suppliers->all($sort, $order, $currentPage, $perPage);
+        }
+
+        require __DIR__ . '/../views/suppliersView.php';
+    }
+
+    public function create(): void
+    {
+        require __DIR__ . '/../Create/suppliersCreate.php';
+    }
+
+    public function store(): void
+    {
+        $this->Suppliers->create($this->getFormData());
+        header("Location: suppliers.php");
+        exit();
+    }
+
+    public function edit(int $id): void
+    {
+        $supplier = $this->Suppliers->find($id);
+        if (!$supplier) die("Supplier not found");
+        require __DIR__ . '/../Create/suppliersEdit.php';
+    }
+
+    public function update(int $id): void
+    {
+        $this->Suppliers->update($id, $this->getFormData());
+        header("Location: suppliers.php");
+        exit();
+    }
+
+    public function delete(int $id): void
+    {
+        $this->Suppliers->delete($id);
+        header("Location: suppliers.php");
+        exit();
+    }
+
+    private function getFormData(): array
+    {
+        return [
+            'supplier_code'              => $_POST['supplier_code'] ?? '',
+            'company_name'               => $_POST['company_name'] ?? '',
+            'contact_person'             => $_POST['contact_person'] ?? '',
+            'email'                      => $_POST['email'] ?? '',
+            'phone'                      => $_POST['phone'] ?? '',
+            'website'                    => $_POST['website'] ?? '',
+            'chamber_of_commerce_number' => $_POST['chamber_of_commerce_number'] ?? '',
+            'vat_number'                 => $_POST['vat_number'] ?? '',
+            'street'                     => $_POST['street'] ?? '',
+            'house_number'               => $_POST['house_number'] ?? '',
+            'postal_code'                => $_POST['postal_code'] ?? '',
+            'city'                       => $_POST['city'] ?? '',
+            'country'                    => $_POST['country'] ?? 'Netherlands',
+            'bank_account'               => $_POST['bank_account'] ?? '',
+            'delivery_time_days'         => $_POST['delivery_time_days'] ?? 7,
+            'supplier_rating'            => $_POST['supplier_rating'] ?? 5.00,
+            'is_active'                  => $_POST['is_active'] ?? 1,
+            'notes'                      => $_POST['notes'] ?? '',
+        ];
+    }
+}
 ?>

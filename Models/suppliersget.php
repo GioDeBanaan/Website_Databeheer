@@ -11,47 +11,107 @@ class Suppliers
         $this->conn = $conn;
     }
 
-    public function all(string $sort = 'supplier_id', string $order = 'DESC'): array
+    public function all(string $sort = 'supplier_id', string $order = 'DESC', int $page = 1, int $perPage = 10): array
     {
         $allowedSorts = ['supplier_id', 'supplier_code', 'company_name', 'contact_person', 'delivery_time_days', 'supplier_rating'];
         $allowedOrders = ['ASC', 'DESC'];
-
         if (!in_array($sort, $allowedSorts)) $sort = 'supplier_id';
         if (!in_array($order, $allowedOrders)) $order = 'DESC';
 
-        $sql = "SELECT supplier_id, supplier_code, company_name, contact_person, email, phone, website, 
-                       chamber_of_commerce_number, vat_number, street, house_number, postal_code, city, 
-                       country, bank_account, delivery_time_days, supplier_rating, is_active, notes, 
-                       created_at, updated_at 
-                FROM suppliers 
-                ORDER BY $sort $order";
-        return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        $offset = max(0, ($page - 1) * $perPage);
+
+        $sql = "SELECT supplier_id, supplier_code, company_name, contact_person, email, phone, website,
+                       chamber_of_commerce_number, vat_number, street, house_number, postal_code, city,
+                       country, bank_account, delivery_time_days, supplier_rating, is_active, notes,
+                       created_at, updated_at
+                FROM suppliers
+                ORDER BY $sort $order
+                LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countAll(): int
+    {
+        return (int) $this->conn->query("SELECT COUNT(*) FROM suppliers")->fetchColumn();
+    }
+
+    public function search(string $searchterm, string $sort = 'supplier_id', string $order = 'DESC', int $page = 1, int $perPage = 10): array
+    {
+        $allowedSorts = ['supplier_id', 'supplier_code', 'company_name', 'contact_person', 'delivery_time_days', 'supplier_rating'];
+        $allowedOrders = ['ASC', 'DESC'];
+        if (!in_array($sort, $allowedSorts)) $sort = 'supplier_id';
+        if (!in_array($order, $allowedOrders)) $order = 'DESC';
+
+        $offset = max(0, ($page - 1) * $perPage);
+
+        $sql = "SELECT supplier_id, supplier_code, company_name, contact_person, email, phone, website,
+                       chamber_of_commerce_number, vat_number, street, house_number, postal_code, city,
+                       country, bank_account, delivery_time_days, supplier_rating, is_active, notes,
+                       created_at, updated_at
+                FROM suppliers
+                WHERE supplier_id LIKE :search
+                   OR supplier_code LIKE :search
+                   OR company_name LIKE :search
+                   OR contact_person LIKE :search
+                   OR email LIKE :search
+                   OR city LIKE :search
+                   OR country LIKE :search
+                ORDER BY $sort $order
+                LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':search', '%' . $searchterm . '%', PDO::PARAM_STR);
+        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countSearch(string $searchterm): int
+    {
+        $sql = "SELECT COUNT(*) FROM suppliers
+                WHERE supplier_id LIKE :search
+                   OR supplier_code LIKE :search
+                   OR company_name LIKE :search
+                   OR contact_person LIKE :search
+                   OR email LIKE :search
+                   OR city LIKE :search
+                   OR country LIKE :search";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':search', '%' . $searchterm . '%', PDO::PARAM_STR);
+        $stmt->execute();
+        return (int) $stmt->fetchColumn();
     }
 
     public function find(int $id): ?array
     {
-        $sql = "SELECT supplier_id, supplier_code, company_name, contact_person, email, phone, website, 
-                       chamber_of_commerce_number, vat_number, street, house_number, postal_code, city, 
-                       country, bank_account, delivery_time_days, supplier_rating, is_active, notes, 
-                       created_at, updated_at 
-                FROM suppliers 
+        $sql = "SELECT supplier_id, supplier_code, company_name, contact_person, email, phone, website,
+                       chamber_of_commerce_number, vat_number, street, house_number, postal_code, city,
+                       country, bank_account, delivery_time_days, supplier_rating, is_active, notes,
+                       created_at, updated_at
+                FROM suppliers
                 WHERE supplier_id = :id";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
-
         $supplier = $stmt->fetch(PDO::FETCH_ASSOC);
         return $supplier ?: null;
     }
 
     public function create(array $data): int
     {
-        $sql = "INSERT INTO suppliers (supplier_code, company_name, contact_person, email, phone, website, 
-                                       chamber_of_commerce_number, vat_number, street, house_number, postal_code, 
+        $sql = "INSERT INTO suppliers (supplier_code, company_name, contact_person, email, phone, website,
+                                       chamber_of_commerce_number, vat_number, street, house_number, postal_code,
                                        city, country, bank_account, delivery_time_days, supplier_rating, is_active, notes)
-                VALUES (:supplier_code, :company_name, :contact_person, :email, :phone, :website, 
-                        :chamber_of_commerce_number, :vat_number, :street, :house_number, :postal_code, 
+                VALUES (:supplier_code, :company_name, :contact_person, :email, :phone, :website,
+                        :chamber_of_commerce_number, :vat_number, :street, :house_number, :postal_code,
                         :city, :country, :bank_account, :delivery_time_days, :supplier_rating, :is_active, :notes)";
 
         $stmt = $this->conn->prepare($sql);
@@ -73,7 +133,6 @@ class Suppliers
         $stmt->bindValue(':supplier_rating', $data['supplier_rating'], PDO::PARAM_STR);
         $stmt->bindValue(':is_active', $data['is_active'], PDO::PARAM_INT);
         $stmt->bindValue(':notes', $data['notes'], PDO::PARAM_STR);
-
         $stmt->execute();
         return (int)$this->conn->lastInsertId();
     }
@@ -121,7 +180,6 @@ class Suppliers
         $stmt->bindValue(':is_active', $data['is_active'], PDO::PARAM_INT);
         $stmt->bindValue(':notes', $data['notes'], PDO::PARAM_STR);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-
         return $stmt->execute();
     }
 

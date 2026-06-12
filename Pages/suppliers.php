@@ -19,21 +19,15 @@ switch ($action) {
         $controller->store();
         break;
     case 'edit':
-        if ($id === null) {
-            die("Missing supplier id");
-        }
+        if ($id === null) die("Missing supplier id");
         $controller->edit($id);
         break;
     case 'update':
-        if ($id === null) {
-            die("Missing supplier id");
-        }
+        if ($id === null) die("Missing supplier id");
         $controller->update($id);
         break;
     case 'delete':
-        if ($id === null) {
-            die("Missing supplier id");
-        }
+        if ($id === null) die("Missing supplier id");
         $controller->delete($id);
         break;
     default:
