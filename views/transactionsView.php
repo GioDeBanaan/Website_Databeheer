@@ -8,7 +8,7 @@ if (!isset($transactionresults)) {
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
         <title> Transactions </title>
     </head>
-    <body>
+    <body id="top">
         <header class="navbar navbar-expand-lg navbar-light bg-light justify-content-center">
             <ul class=" navbar-nav ">
                 <li class="nav-item">
@@ -31,18 +31,19 @@ if (!isset($transactionresults)) {
                 </li>
             </ul>
         </header>
-        <div class="container mt-4 d-flex justify-content-center" >
+
+         <div class="container mt-4 d-flex justify-content-center">
             <a href="../Create/transactionsCreate.php" class="btn btn-success mb-3">Add new transaction</a>
         </div>
-        <table class="table table-bordered">
+
+            <table class="table table-bordered">
             <tr>
                 <th>Transaction id</th>
                 <th>Transaction code</th>
                 <th>Transaction type</th>
-                <th>Customer</th>
-                <th>Supplier id</th>
-                <th>Employee id</th>
-                <th>Game id</th>
+                <th>Customer Name</th>
+                <th>Company</th>
+                <th>Game name</th>
                 <th>Transaction date</th>
                 <th>Quantity</th>
                 <th>Unit price</th>
@@ -53,17 +54,17 @@ if (!isset($transactionresults)) {
                 <th>Order status</th>
                 <th>Created at</th>
                 <th>Updated at</th>
-                <th>Actions</th>
+                <th>Edit</th>
+                <th>Delete</th>
             </tr>
             <?php foreach ($transactionresults as $transaction):?>
                 <tr>
                     <td><?= htmlspecialchars($transaction["transaction_id"]) ?></td>
                     <td><?= htmlspecialchars($transaction["transaction_code"]) ?></td>
                     <td><?= htmlspecialchars($transaction["transaction_type"]) ?></td>
-                    <td><?= htmlspecialchars($transaction["customer_id"]) ?></td>
-                    <td><?= htmlspecialchars($transaction["supplier_id"]) ?></td>
-                    <td><?= htmlspecialchars($transaction["employee_id"]) ?></td>
-                    <td><?= htmlspecialchars($transaction["game_id"]) ?></td>
+                    <td><?= htmlspecialchars($transaction["customer_name"]) ?></td>
+                    <td><?= htmlspecialchars($transaction["company"]) ?></td>
+                    <td><?= htmlspecialchars($transaction["game_name"]) ?></td>
                     <td><?= htmlspecialchars($transaction["transaction_date"]) ?></td>
                     <td><?= htmlspecialchars($transaction["quantity"]) ?></td>
                     <td><?= htmlspecialchars($transaction["unit_price"]) ?></td>
@@ -75,15 +76,12 @@ if (!isset($transactionresults)) {
                     <td><?= htmlspecialchars($transaction["created_at"]) ?></td>
                     <td><?= htmlspecialchars($transaction["updated_at"]) ?></td>
                     <td><a href="../Create/transactionsEdit.php?id=<?= $transaction['transaction_id'] ?>" class="btn btn-primary">Edit</a>
-                                    <div class="modal-body">
-                    <img id="deleteImage" src="../mqdefault.jpg" alt="Game Image" class="img-fluid mb-3">
-                    <p>Are you sure you want to delete <strong id="deleteTitle"></strong>?</p>
-                </div>
+                    <td><button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteData(<?= $transaction['transaction_id'] ?>, '<?= htmlspecialchars(addslashes($transaction['transaction_code'])) ?>')">Delete</button></td>
+                </tr>
             <?php endforeach; ?>
         </table>
 
-
-                <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+ <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -91,7 +89,7 @@ if (!isset($transactionresults)) {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <img id="deleteImage" src="../mqdefault.jpg" alt="Transaction Image" class="img-fluid mb-3">
+                    <img id="deleteImage" src="../mqdefault.jpg" alt="Game Image" class="img-fluid mb-3">
                     <p>Are you sure you want to delete <strong id="deleteTitle"></strong>?</p>
                 </div>
                 <div class="modal-footer">
@@ -104,19 +102,21 @@ if (!isset($transactionresults)) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        let deleteTransactionId = null;
+        let deletetransactionId = null;
 
         function setDeleteData(transactionId, transactionTitle) {
-            deleteTransactionId = transactionId;
+            deletetransactionId = transactionId;
             document.getElementById('deleteTitle').textContent = transactionTitle;
         }
 
         function confirmDelete() {
-            if (deleteTransactionId) {
-                window.location.href = '../Delete/transactiondelete.php?id=' + deleteTransactionId;
+            if (deletetransactionId) {
+                window.location.href = '../Delete/transactionsDelete.php?id=' + deletetransactionId;
             }
         }
     </script>
-
+    <div class="justify-content-center d-flex mb-4">
+        <a href="#top" class="btn btn-outline-warning scroll-to-top">Back to Top</a>
+    </div>
     </body>
 </html>

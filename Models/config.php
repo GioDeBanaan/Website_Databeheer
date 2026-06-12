@@ -38,9 +38,31 @@
     $supplierresult = $conn->query($sql);
     // concat is als je twee of meer dingen in een wil hebben zoals hier wil ik voor en achternaam samen dit is effe een reminder voor kai
 
-    $sql = "SELECT t.transaction_id, t.transaction_code, t.transaction_type,  CONCAT(c.first_name, ' ', c.last_name) AS customer_name, s.company_name AS supplier_name, g.title AS game_title, t.transaction_date, t.quantity, t.unit_price, t.discount_percent, t.tax_percent, t.payment_method, t.payment_status, t.order_status, t.created_at, t.updated_at FROM transactions t LEFT JOIN customers c ON t.customer_id = c.customer_id LEFT JOIN suppliers s ON t.supplier_id = s.supplier_id LEFT JOIN games g ON t.game_id = g.game_id ORDER BY t.transaction_id DESC";
+$sql = "SELECT  supplier_id, supplier_code, company_name, contact_person, email, phone, website, chamber_of_commerce_number, vat_number, street, house_number, postal_code, city, country, bank_account, delivery_time_days, supplier_rating, is_active, notes, created_at, updated_at FROM suppliers ORDER BY supplier_id DESC";
+
+    $supplierresult = $conn->query($sql);
+// Fully corrected transaction query: matches customer_name, company, and game_name
+    $sql = "SELECT 
+                t.transaction_id, 
+                t.transaction_code, 
+                t.transaction_type, 
+                t.customer_name, 
+                s.company_name AS company_name, 
+                g.title AS game_name, 
+                t.transaction_date, 
+                t.quantity, 
+                t.unit_price, 
+                t.discount_percent, 
+                t.tax_percent, 
+                t.payment_method, 
+                t.payment_status, 
+                t.order_status, 
+                t.created_at, 
+                t.updated_at 
+            FROM transactions t 
+            LEFT JOIN suppliers s ON t.company = s.supplier_id 
+            LEFT JOIN games g ON t.game_name = g.game_id 
+            ORDER BY t.transaction_id DESC";
 
     $transactionresult = $conn->query($sql);
-
-
-?>
+    ?>

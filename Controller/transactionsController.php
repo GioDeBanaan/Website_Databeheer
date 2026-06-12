@@ -29,8 +29,6 @@ public function store(): void
 
 private function getFormData(): array
 {
-    // Debug point: If transaction_code is missing from POST altogether, 
-    // it means the HTML input name attribute does not match.
     if (!isset($_POST['transaction_code'])) {
         echo "<pre>CRITICAL: PHP cannot find 'transaction_code' in the submitted form.\n";
         echo "Here is what PHP actually received:\n";

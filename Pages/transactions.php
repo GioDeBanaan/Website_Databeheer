@@ -4,7 +4,6 @@ require_once __DIR__ . '/../Controller/transactionsController.php';
 $controller = new TransactionsController();
 $action = $_GET['action'] ?? 'index';
 
-// 🌟 FIX: Grab the ID up here so ALL cases below can see it!
 $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
 
 switch ($action) {

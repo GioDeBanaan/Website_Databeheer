@@ -1,26 +1,34 @@
 <?php
 require_once __DIR__ . '/../Models/config.php';
 
-// Change 'transaction_id' to 'id' to match standard query strings
-if (isset($_GET['id'])) {
-    $transaction_id = $_GET['id'];
+$transactionId = $_GET['transaction_id'] ?? $_GET['id'] ?? null;
 
-    $sql = "DELETE FROM transactions WHERE transaction_id = :transaction_id";
+if ($transactionId !== null) {
+	try {
+		$conn->beginTransaction();
 
-    try {
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([
-            ':transaction_id' => $transaction_id
-        ]);
+		$deleteTransactions = "DELETE FROM transactions WHERE transaction_id = :transaction_id";
+		$stmt = $conn->prepare($deleteTransactions);
+		$stmt->execute([
+			":transaction_id" => $transactionId
+		]);
 
-        header('Location: ../Pages/transactions.php?status=succesdel');
-        exit;
-    } catch (PDOException $e) {
-        echo 'Fout: ' . $e->getMessage();
-        exit;
-    }
+		$deletetransactions = "DELETE FROM transactions WHERE transaction_id = :transaction_id";
+		$stmt = $conn->prepare($deletetransactions);
+		$stmt->execute([
+			":transaction_id" => $transactionId
+		]);
+
+		$conn->commit();
+
+		header("Location: ../Pages/transactions.php?status=succesdel");
+		exit;
+
+	} catch (PDOException $e) {
+		$conn->rollBack();
+		echo "Fout: " . $e->getMessage();
+	}
+} else {
+	header("Location: ../Pages/transactions.php?status=fail");
+	exit;
 }
-
-// If it fails, redirect back to transactions, not employees!
-header('Location: ../Pages/transactions.php?status=fail');
-exit;

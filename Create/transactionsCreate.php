@@ -7,14 +7,9 @@
         <div class="container mt-4 d-flex justify-content-center" >
         <h1>Add new transaction</h1>
         </div>
-        <div class="container mt-4 d-flex justify-content-center" >
-            <a href="../Pages/transactions.php" class="btn btn-success mb-3">Return</a>
-        </div> 
         <form method="post" action="../Pages/transactions.php?action=store">
             <?php include __DIR__ . "/../Models/config.php"; 
             include __DIR__ . "/transactionsForm.php"; ?>
-</div>
-        </div>
     </form>
     </body>
 </html>
