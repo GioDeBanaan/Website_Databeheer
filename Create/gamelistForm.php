@@ -62,6 +62,7 @@
                     <div class="col-md-6">
                         <label class="form-label">Personal Rating</label>
                         <div class="d-flex gap-2">
+                            <span class="input-group-text">🟊</span>
                             <input type="range" id="rating" name="rating" min="1.0" max="10.0" step="0.1" value="<?= $ratingValue ?>" class="form-range" required />
                             <input type="number" id="ratingValue" class="form-control" style="width: 100px;" min="1.0" max="10.0" step="0.1" value="<?= $ratingValue ?>" lang="en-US" />
                         </div>
