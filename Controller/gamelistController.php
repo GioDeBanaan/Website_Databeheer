@@ -53,6 +53,7 @@
                 'description' => $_POST['description'] ?? '',
                 'released_at' => $_POST['released_at'] ?? '',
                 'personal_rating' => str_replace(',', '.', $_POST['rating'] ?? '0'),
+                'price' => str_replace(',', '.', $_POST['price'] ?? '0'),
                 'genre_ids' => !empty($_POST['genres']) ? array_map('intval', $_POST['genres']) : [],
                 'platform_ids' => !empty($_POST['platforms']) ? array_map('intval', $_POST['platforms']) : [],
             ];

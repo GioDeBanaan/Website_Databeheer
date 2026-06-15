@@ -41,7 +41,7 @@ class Game
         $offset = max(0, ($page - 1) * $perPage);
         
         $sql = "SELECT g.game_id, g.title, g.description, g.released_at,
-                       g.personal_rating,
+                       g.personal_rating, g.price,
                        GROUP_CONCAT(DISTINCT ge.name ORDER BY ge.name SEPARATOR ', ') AS genre_names,
                        GROUP_CONCAT(DISTINCT p.name ORDER BY p.name SEPARATOR ', ') AS platform_names,
                        g.rawg_id, g.rawg_rating, g.created_at, g.updated_at
@@ -50,7 +50,7 @@ class Game
                 LEFT JOIN genres ge ON gg.genre_id = ge.genre_id
                 LEFT JOIN game_platforms gp ON g.game_id = gp.game_id
                 LEFT JOIN platforms p ON gp.platform_id = p.platform_id
-                GROUP BY g.game_id, g.title, g.description, g.released_at, g.personal_rating, g.rawg_id, g.rawg_rating, g.created_at, g.updated_at
+                GROUP BY g.game_id, g.title, g.description, g.released_at, g.personal_rating, g.price, g.rawg_id, g.rawg_rating, g.created_at, g.updated_at
                 ORDER BY " . $orderBy . "
                 LIMIT :limit OFFSET :offset";
 
@@ -76,7 +76,7 @@ class Game
     public function find(int $id): ?array
     {
         $sql = "SELECT g.game_id, g.title, g.description, g.released_at,
-                       g.personal_rating, g.genre_id, g.platform_id, g.rawg_id,
+                       g.personal_rating, g.price, g.genre_id, g.platform_id, g.rawg_id,
                        g.rawg_rating, g.created_at, g.updated_at
                 FROM games g
                 WHERE g.game_id = :id";
@@ -100,14 +100,15 @@ class Game
     {
         $rawgRating = $this->fetchRawgRating($data['title']);
 
-        $sql = "INSERT INTO games (title, description, released_at, personal_rating, genre_id, platform_id, rawg_rating, created_at, updated_at)
-                VALUES (:title, :description, :released_at, :personal_rating, :genre_id, :platform_id, :rawg_rating, NOW(), NOW())";
+        $sql = "INSERT INTO games (title, description, released_at, personal_rating, price, genre_id, platform_id, rawg_rating, created_at, updated_at)
+                VALUES (:title, :description, :released_at, :personal_rating, :price, :genre_id, :platform_id, :rawg_rating, NOW(), NOW())";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(':title', $data['title'], PDO::PARAM_STR);
         $stmt->bindValue(':description', $data['description'], PDO::PARAM_STR);
         $stmt->bindValue(':released_at', $data['released_at'], PDO::PARAM_STR);
         $stmt->bindValue(':personal_rating', $data['personal_rating'], PDO::PARAM_STR);
+        $stmt->bindValue(':price', $data['price'], PDO::PARAM_STR);
         $stmt->bindValue(':genre_id', $this->getPrimaryId($data['genre_ids']), $this->getPrimaryId($data['genre_ids']) === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
         $stmt->bindValue(':platform_id', $this->getPrimaryId($data['platform_ids']), $this->getPrimaryId($data['platform_ids']) === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
         $stmt->bindValue(':rawg_rating', $rawgRating, $rawgRating === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
@@ -154,6 +155,7 @@ class Game
                     description = :description,
                     released_at = :released_at,
                     personal_rating = :personal_rating,
+                    price = :price,
                     genre_id = :genre_id,
                     platform_id = :platform_id,
                     updated_at = NOW()
@@ -164,6 +166,7 @@ class Game
         $stmt->bindValue(':description', $data['description'], PDO::PARAM_STR);
         $stmt->bindValue(':released_at', $data['released_at'], PDO::PARAM_STR);
         $stmt->bindValue(':personal_rating', $data['personal_rating'], PDO::PARAM_STR);
+        $stmt->bindValue(':price', $data['price'], PDO::PARAM_STR);
         $stmt->bindValue(':genre_id', $this->getPrimaryId($data['genre_ids']), $this->getPrimaryId($data['genre_ids']) === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
         $stmt->bindValue(':platform_id', $this->getPrimaryId($data['platform_ids']), $this->getPrimaryId($data['platform_ids']) === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -264,7 +267,7 @@ class Game
     {
         $offset = max(0, ($page - 1) * $perPage);
         $sql = "SELECT g.game_id, g.title, g.description, g.released_at,
-                       g.personal_rating,
+                       g.personal_rating, g.price,
                        GROUP_CONCAT(DISTINCT ge.name ORDER BY ge.name SEPARATOR ', ') AS genre_names,
                        GROUP_CONCAT(DISTINCT p.name ORDER BY p.name SEPARATOR ', ') AS platform_names,
                        g.rawg_id, g.rawg_rating, g.created_at, g.updated_at
@@ -273,8 +276,8 @@ class Game
                 LEFT JOIN genres ge ON gg.genre_id = ge.genre_id
                 LEFT JOIN game_platforms gp ON g.game_id = gp.game_id
                 LEFT JOIN platforms p ON gp.platform_id = p.platform_id
-                WHERE g.title LIKE :Searchterm OR g.description LIKE :Searchterm OR ge.name LIKE :Searchterm OR p.name LIKE :Searchterm OR g.personal_rating LIKE :Searchterm OR g.rawg_rating LIKE :Searchterm
-                GROUP BY g.game_id, g.title, g.description, g.released_at, g.personal_rating, g.rawg_id, g.rawg_rating, g.created_at, g.updated_at
+                WHERE g.title LIKE :Searchterm OR g.description LIKE :Searchterm OR ge.name LIKE :Searchterm OR p.name LIKE :Searchterm OR g.personal_rating LIKE :Searchterm OR g.rawg_rating LIKE :Searchterm OR g.price LIKE :Searchterm
+                GROUP BY g.game_id, g.title, g.description, g.released_at, g.personal_rating, g.price, g.rawg_id, g.rawg_rating, g.created_at, g.updated_at
                 ORDER BY g.game_id ASC
                 LIMIT :limit OFFSET :offset";
 
@@ -294,7 +297,7 @@ class Game
                 LEFT JOIN genres ge ON gg.genre_id = ge.genre_id
                 LEFT JOIN game_platforms gp ON g.game_id = gp.game_id
                 LEFT JOIN platforms p ON gp.platform_id = p.platform_id
-                WHERE g.title LIKE :Searchterm OR g.description LIKE :Searchterm OR ge.name LIKE :Searchterm OR p.name LIKE :Searchterm OR g.personal_rating LIKE :Searchterm OR g.rawg_rating LIKE :Searchterm";
+                WHERE g.title LIKE :Searchterm OR g.description LIKE :Searchterm OR ge.name LIKE :Searchterm OR p.name LIKE :Searchterm OR g.personal_rating LIKE :Searchterm OR g.rawg_rating LIKE :Searchterm OR g.price LIKE :Searchterm";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(':Searchterm', "%" . $Searchterm . "%", PDO::PARAM_STR);

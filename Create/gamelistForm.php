@@ -44,6 +44,13 @@
                         <label class="form-label">Description</label>
                         <textarea class="form-control" name="description" placeholder="Enter game description" required><?= htmlspecialchars($game['description'] ?? '') ?></textarea>
                     </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Price</label>
+                        <div class="input-group">
+                            <span class="input-group-text">€</span>
+                            <input type="number" name="price" class="form-control" step="0.01" min="0" value="<?= htmlspecialchars($game['price'] ?? '') ?>" required>
+                        </div>
+                    </div>
                     <div class="col-12 mt-4">
                         <h4 class="mb-3">Ratings</h4>
                     </div>
