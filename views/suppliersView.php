@@ -120,7 +120,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-center">
-                        <img src="../are-you-sure.gif" alt="Supplier Image" class="img-fluid mb-3">
+                        <img id="duckImg" src="" alt="Random duck" style="width: 100%;" />
                         <p>Are you sure you want to delete <strong id="deleteTitle"></strong>?</p>
                     </div>
                     <div class="modal-footer">
@@ -131,13 +131,21 @@
             </div>
         </div>
 
+        <div class="justify-content-center d-flex mb-4">
+            <a href="#top" class="btn btn-outline-warning">Back to Top</a>
+        </div>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
         <script>
             let deleteSupplierId = null;
 
-            function setDeleteData(supplierId, supplierName) {
+            async function setDeleteData(supplierId, supplierName) {
                 deleteSupplierId = supplierId;
                 document.getElementById('deleteTitle').textContent = supplierName;
+
+                const res = await fetch('../Controller/suppliersApi.php');
+                const data = await res.json();
+                document.getElementById('duckImg').src = data.url;
             }
 
             function confirmDelete() {
@@ -146,9 +154,5 @@
                 }
             }
         </script>
-
-        <div class="justify-content-center d-flex mb-4">
-            <a href="#top" class="btn btn-outline-warning">Back to Top</a>
-        </div>
     </body>
 </html>
