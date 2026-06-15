@@ -1,166 +1,128 @@
 <?php
-// 08/06/2026 made by Kai Hiraki
+// --- HTML2PDF.app API key ---
+$apiKey = 'YOUR_HTML2PDF_API_KEY'; // Replace with your key from html2pdf.app
+ 
+// --- DB connection ---
 require_once __DIR__ . '/../Models/config.php';
-
-header('Content-Type: text/html; charset=utf-8');
-
-$apiKey = '33ddc7bd021d4630b707464fe32c531b';
-
-// Handle JSON search requests
-if (isset($_GET['action']) && $_GET['action'] === 'search') {
-    header('Content-Type: application/json');
-    
-    $query = $_GET['query'] ?? '';
-    if (empty($query)) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Query parameter is required']);
-        exit;
-    }
-
-    $results = searchRawgGames($query, $apiKey);
-    echo json_encode($results);
-    exit;
+ 
+// --- Fetch transactions (your existing query) ---
+$sql = "SELECT 
+            t.transaction_id,  
+            t.transaction_type, 
+            t.customer_name, 
+            s.company_name AS company_name, 
+            g.title AS game_name, 
+            t.transaction_date, 
+            t.quantity, 
+            t.unit_price, 
+            t.discount_percent, 
+            t.tax_percent, 
+            t.payment_method, 
+            t.payment_status, 
+            t.order_status, 
+            t.created_at, 
+            t.updated_at 
+        FROM transactions t 
+        LEFT JOIN suppliers s ON t.company = s.supplier_id 
+        LEFT JOIN games g ON t.game_name = g.game_id 
+        ORDER BY t.transaction_id DESC";
+ 
+$transactionresult = $conn->query($sql);
+$transactions = $transactionresult->fetchAll(PDO::FETCH_ASSOC);
+ 
+// --- Build HTML table ---
+$rows = '';
+foreach ($transactions as $t) {
+    $statusColor = match(strtolower($t['payment_status'])) {
+        'completed' => '#198754',
+        'pending'   => '#ffc107',
+        'cancelled' => '#dc3545',
+        default     => '#6c757d',
+    };
+ 
+    $rows .= '<tr>
+        <td>' . htmlspecialchars($t['transaction_type'])   . '</td>
+        <td>' . htmlspecialchars($t['customer_name'])      . '</td>
+        <td>' . htmlspecialchars($t['company_name'])       . '</td>
+        <td>' . htmlspecialchars($t['game_name'])          . '</td>
+        <td>' . htmlspecialchars($t['transaction_date'])   . '</td>
+        <td style="text-align:center">' . htmlspecialchars($t['quantity'])         . '</td>
+        <td style="text-align:right">€' . number_format((float)$t['unit_price'], 2) . '</td>
+        <td style="text-align:center">' . htmlspecialchars($t['discount_percent']) . '%</td>
+        <td style="text-align:center">' . htmlspecialchars($t['tax_percent'])      . '%</td>
+        <td>' . htmlspecialchars($t['payment_method'])     . '</td>
+        <td style="color:' . $statusColor . ';font-weight:bold">' . htmlspecialchars($t['payment_status']) . '</td>
+        <td>' . htmlspecialchars($t['order_status'])       . '</td>
+    </tr>';
 }
-
-function searchRawgGames(string $query, string $apiKey): array
-{
-    $url = 'https://api.rawg.io/api/games?search=' . rawurlencode($query) . '&page_size=10&key=' . $apiKey;
-    
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $curlErrNo = curl_errno($ch);
-    $curlErr = curl_error($ch);
-    curl_close($ch);
-    
-    if ($curlErrNo) {
-        return ['error' => 'cURL error: ' . $curlErr, 'results' => []];
-    }
-    
-    if ($httpCode < 200 || $httpCode >= 300) {
-        $decoded = json_decode($response, true);
-        $msg = $decoded['detail'] ?? $decoded['message'] ?? $response;
-        return ['error' => 'RAWG API returned HTTP ' . $httpCode . ': ' . $msg, 'results' => []];
-    }
-    
-    $data = json_decode($response, true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        return ['error' => 'Invalid JSON response from RAWG API', 'results' => []];
-    }
-    
-    return [
-        'results' => $data['results'] ?? [],
-        'count' => $data['count'] ?? (isset($data['results']) ? count($data['results']) : 0)
-    ];
-}
-
-function fetchRawgRating(string $title, string $apiKey): ?string
-{
-    $url = 'https://api.rawg.io/api/games?search=' . rawurlencode($title) . '&page_size=1&key=' . $apiKey;
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-
-    $response = curl_exec($ch);
-    $curlErrNo = curl_errno($ch);
-    $curlErr = curl_error($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-    if ($curlErrNo) {
-        curl_close($ch);
-        return null;
-    }
-
-    curl_close($ch);
-
-    if ($httpCode < 200 || $httpCode >= 300) {
-        return null;
-    }
-
-    $data = json_decode($response, true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        return null;
-    }
-
-    if (!isset($data['results'][0]['rating'])) {
-        return null;
-    }
-
-    $rawRating = (float)$data['results'][0]['rating'];
-    $doubledRating = $rawRating * 2;
-    return number_format($doubledRating, 1, '.', '');
-}
-
-try {
-    $stmt = $conn->query('SELECT game_id, title, rawg_rating FROM games ORDER BY title ASC');
-    $titles = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    http_response_code(500);
-    echo '<p>Database error: ' . htmlspecialchars($e->getMessage()) . '</p>';
-    exit;
-}
-
-$updateStmt = $conn->prepare('UPDATE games SET rawg_rating = :rawg_rating WHERE game_id = :game_id');
-$games = [];
-foreach ($titles as $row) {
-    $rawgRating = $row['rawg_rating'];
-    $displayRating = $rawgRating;
-
-    if ($rawgRating === null || $rawgRating === '') {
-        $displayRating = fetchRawgRating($row['title'], $apiKey);
-        if ($displayRating !== null) {
-            $updateStmt->execute([
-                ':rawg_rating' => $displayRating,
-                ':game_id' => $row['game_id'],
-            ]);
-        }
-    } elseif (is_numeric($rawgRating) && (float)$rawgRating <= 5.0) {
-        $displayRating = number_format((float)$rawgRating * 2, 1, '.', '');
-    }
-
-    $games[] = [
-        'title' => $row['title'],
-        'rawg_rating' => $displayRating,
-    ];
-}
-?>
-<!DOCTYPE html>
-<html lang="en">
+ 
+$generatedAt = date('Y-m-d H:i:s');
+$totalRows   = count($transactions);
+ 
+$html = <<<HTML
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Game Titles</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    body  { font-family: Arial, sans-serif; font-size: 9px; color: #222; }
+    h1    { font-size: 16px; margin-bottom: 4px; }
+    .meta { font-size: 8px; color: #666; margin-bottom: 12px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th    { background-color: #343a40; color: #fff; padding: 5px 4px; text-align: left; font-size: 8px; }
+    td    { padding: 4px; border-bottom: 1px solid #dee2e6; font-size: 8px; }
+    tr:nth-child(even) td { background-color: #f8f9fa; }
+    .footer { margin-top: 16px; font-size: 8px; color: #888; text-align: right; }
+</style>
 </head>
 <body>
-    <div class="container mt-4">
-        <h1>Game Titles</h1>
-        <?php if (empty($games)): ?>
-            <div class="alert alert-warning">No games found in the database.</div>
-        <?php else: ?>
-            <table class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Title</th>
-                        <th>RAWG Rating</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($games as $index => $game): ?>
-                        <tr>
-                            <td><?= $index + 1 ?></td>
-                            <td><?= htmlspecialchars($game['title']) ?></td>
-                            <td><?= htmlspecialchars($game['rawg_rating'] ?? 'N/A') ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php endif; ?>
-    </div>
+    <h1>Transactions Report</h1>
+    <div class="meta">Generated: $generatedAt &nbsp;|&nbsp; Total records: $totalRows</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Customer</th>
+                <th>Company</th>
+                <th>Game</th>
+                <th>Date</th>
+                <th>Qty</th>
+                <th>Unit price</th>
+                <th>Discount</th>
+                <th>Tax</th>
+                <th>Payment method</th>
+                <th>Pay status</th>
+                <th>Order status</th>
+            </tr>
+        </thead>
+        <tbody>
+            $rows
+        </tbody>
+    </table>
+    <div class="footer">Exported from your transactions system</div>
 </body>
 </html>
+HTML;
+ 
+// --- Send to HTML2PDF.app API ---
+$response = file_get_contents('https://api.html2pdf.app/v1/generate', false, stream_context_create([
+    'http' => [
+        'method'  => 'POST',
+        'header'  => 'Content-Type: application/json',
+        'content' => json_encode([
+            'apiKey'    => $apiKey,
+            'html'      => $html,
+            'landscape' => true,
+            'margin'    => '10mm',
+        ]),
+    ]
+]));
+ 
+if ($response === false) {
+    die("Failed to connect to HTML2PDF.app API. Check your API key or internet connection.");
+}
+ 
+// --- Download the PDF ---
+header('Content-Type: application/pdf');
+header('Content-Disposition: attachment; filename="transactions_' . date('Y-m-d') . '.pdf"');
+header('Content-Length: ' . strlen($response));
+echo $response;
+ 

@@ -34,6 +34,7 @@ if (!isset($transactionresults)) {
 
          <div class="container mt-4 d-flex justify-content-center">
             <a href="../Create/transactionsCreate.php" class="btn btn-success mb-3">Add new transaction</a>
+            <a href="../Controller/transactionsApi.php" class="btn btn-secondary mb-3">Export to PDF</a>
         </div>
 
             <table class="table table-bordered">
