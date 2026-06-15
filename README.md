@@ -7,6 +7,7 @@ A web-based data management application built with PHP and MySQL, using a custom
 ## Features
 
 ### Game List
+
 - View all games in a paginated table
 - Search by title, description, genre, platform, or rating
 - Sort by newest or oldest
@@ -14,14 +15,17 @@ A web-based data management application built with PHP and MySQL, using a custom
 - Displays personal rating and RAWG rating side by side
 
 ### Customers
+
 - View, add, edit, and delete customers (CRUD)
 - Customer data includes name, contact details, and company
 
 ### Employees
-- View, add, edit, and delete employees (CRUD)
+
+- View, create, edit, and delete employees (CRUD)
 - Employee data includes name, role, and contact details
 
 ### Suppliers
+
 - View all suppliers in a paginated table
 - Search by ID, code, company name, contact person, email, city, or country
 - Sort by multiple columns (ID, code, company, contact, delivery time, rating)
@@ -29,6 +33,7 @@ A web-based data management application built with PHP and MySQL, using a custom
 - Data includes KVK/BTW numbers, bank account, delivery time, rating, and status
 
 ### Transactions
+
 - View all transactions
 - Add, edit, and delete transactions (CRUD)
 - Data includes transaction type, customer, game, payment method, payment status, and order status
@@ -37,12 +42,12 @@ A web-based data management application built with PHP and MySQL, using a custom
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Backend | PHP 8+ |
-| Database | MySQL |
-| Frontend | Bootstrap 5.3.8 |
-| Local server | XAMPP |
+| Layer        | Technology      |
+| ------------ | --------------- |
+| Backend      | PHP 8+          |
+| Database     | MySQL           |
+| Frontend     | Bootstrap 5.3.8 |
+| Local server | XAMPP           |
 
 ---
 
