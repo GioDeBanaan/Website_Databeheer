@@ -1,6 +1,6 @@
 <?php
 // 1. Include your Transaction class file
-require_once __DIR__ . "/../Pages/transactions.php"; // Adjust path if needed
+require_once __DIR__ . "/../Controller/transactionsController.php"; // Adjust path if needed
 
 $transactionObj = new Transaction();
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -45,7 +45,9 @@ if (!$transaction) {
     <title>Edit Transaction</title>
 </head>
 <body>
-                <title>Update Transaction</title>
+        <div class="container mt-4 d-flex justify-content-center" >
+            <h1>Add new transaction</h1>
+        </div>          
             <form action="transactionsEdit.php?id=<?= $id ?>" method="POST">
             <div class="container mt-4 d-flex justify-content-center">
             <a href="../Pages/transactions.php" class="btn btn-success mb-3">Return</a>

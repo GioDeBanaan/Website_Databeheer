@@ -2,6 +2,11 @@
 if (!isset($transactionresults)) {
     die("transactionresults not passed to view");
 }
+    $newOrder = ($_GET['order'] ?? 'DESC') === 'DESC' ? 'ASC' : 'DESC';
+    $currentSort = $_GET['sort'] ?? 'transaction_id';
+    $searchQuery = isset($_GET['search']) && trim($_GET['search']) !== '' ? '&search=' . urlencode(trim($_GET['search'])) : '';
+    $currentPage = $currentPage ?? 1;
+    $totalPages = $totalPages ?? 1;
 ?>
 <html>
     <head>
@@ -77,6 +82,25 @@ if (!isset($transactionresults)) {
                 </tr>
             <?php endforeach; ?>
         </table>
+
+ <?php if ($totalPages > 1): ?>
+            <nav aria-label="transaction list pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
+                        <a class="page-link" href="transactions.php?page=<?= max(1, $currentPage - 1) ?>&sort=<?= $currentSort ?>&order=<?= $_GET['order'] ?? 'DESC' ?><?= $searchQuery ?>">Previous</a>
+                    </li>
+                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                        <li class="page-item <?= $i === $currentPage ? 'active' : '' ?>">
+                            <a class="page-link" href="transactions.php?page=<?= $i ?>&sort=<?= $currentSort ?>&order=<?= $_GET['order'] ?? 'DESC' ?><?= $searchQuery ?>"><?= $i ?></a>
+                        </li>
+                    <?php endfor; ?>
+                    <li class="page-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
+                        <a class="page-link" href="transactions.php?page=<?= min($totalPages, $currentPage + 1) ?>&sort=<?= $currentSort ?>&order=<?= $_GET['order'] ?? 'DESC' ?><?= $searchQuery ?>">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        <?php endif; ?>
+
 
  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">

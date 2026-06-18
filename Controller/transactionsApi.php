@@ -10,8 +10,8 @@ $sql = "SELECT
             t.transaction_id,  
             t.transaction_type, 
             t.customer_name, 
-            s.company_name AS company_name, 
-            g.title AS game_name, 
+            t.company, 
+            t.game_name, 
             t.transaction_date, 
             t.quantity, 
             t.unit_price, 
@@ -43,7 +43,7 @@ foreach ($transactions as $t) {
     $rows .= '<tr>
         <td>' . htmlspecialchars($t['transaction_type'])   . '</td>
         <td>' . htmlspecialchars($t['customer_name'])      . '</td>
-        <td>' . htmlspecialchars($t['company_name'])       . '</td>
+        <td>' . htmlspecialchars($t['company'])       . '</td>
         <td>' . htmlspecialchars($t['game_name'])          . '</td>
         <td>' . htmlspecialchars($t['transaction_date'])   . '</td>
         <td style="text-align:center">' . htmlspecialchars($t['quantity'])         . '</td>

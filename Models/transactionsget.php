@@ -11,40 +11,62 @@ class Transaction
         $this->conn = $conn;
     }
 
-    public function all(): array
+    public function countAll(): int
     {
-        // Added LEFT JOINs so your dashboard displays supplier and game names instead of raw IDs
-    $sql = "SELECT 
-        transaction_id,
-        transaction_type,
-        customer_name,
-        company,
-        game_name,
-        transaction_date,
-        quantity,
-        unit_price,
-        discount_percent,
-        tax_percent,
-        payment_method,
-        payment_status,
-        order_status,
-        created_at,
-        updated_at
-    FROM transactions
-    ORDER BY transaction_id DESC";
+        $query = "SELECT COUNT(*) FROM transactions";
+        // Gefikst: Veranderd van $this->db naar $this->conn
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+    
+        return (int) $stmt->fetchColumn();
+    }
+
+    // Gefikst: Argumenten toegevoegd zodat sortering en paginering (LIMIT/OFFSET) werken!
+    public function all(string $sort = 'transaction_id', string $order = 'DESC', int $page = 1, int $perPage = 10): array
+    {
+        $allowedSorts = ['transaction_id', 'transaction_type', 'customer_name', 'company', 'game_name', 'transaction_date', 'quantity', 'unit_price', 'discount_percent', 'tax_percent', 'payment_method', 'payment_status', 'order_status', 'created_at', 'updated_at'];
+        $allowedOrders = ['ASC', 'DESC'];
+        if (!in_array($sort, $allowedSorts)) $sort = 'transaction_id';
+        if (!in_array($order, $allowedOrders)) $order = 'DESC';
+
+        $offset = max(0, ($page - 1) * $perPage);
+
+        $sql = "SELECT 
+            transaction_id,
+            transaction_type,
+            customer_name,
+            company,
+            game_name,
+            transaction_date,
+            quantity,
+            unit_price,
+            discount_percent,
+            tax_percent,
+            payment_method,
+            payment_status,
+            order_status,
+            created_at,
+            updated_at
+        FROM transactions
+        ORDER BY $sort $order
+        LIMIT :limit OFFSET :offset";
                 
-        return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function find(int $id): ?array
     {
-        // Added LEFT JOINs here too so viewing a single transaction shows readable data
         $sql = "SELECT 
                     t.transaction_id, 
                     t.transaction_type, 
                     t.customer_name, 
-                    s.company_name AS company, 
-                    g.title AS game_name, 
+                    t.company, 
+                    t.game_name, 
                     t.transaction_date, 
                     t.quantity, 
                     t.unit_price, 
@@ -68,71 +90,121 @@ class Transaction
         return $transaction ?: null;
     }
 
-public function create(array $data): void
-{
-    // 1. Removed transaction_id from columns and VALUES list
-    $sql = "INSERT INTO transactions (transaction_type, customer_name, company, game_name, transaction_date, quantity, unit_price, discount_percent, tax_percent, payment_method, payment_status, order_status, created_at, updated_at)
-            VALUES (:transaction_type, :customer_name, :company, :game_name, :transaction_date, :quantity, :unit_price, :discount_percent, :tax_percent, :payment_method, :payment_status, :order_status, NOW(), NOW())";
+    public function create(array $data): void
+    {
+        $sql = "INSERT INTO transactions (transaction_type, customer_name, company, game_name, transaction_date, quantity, unit_price, discount_percent, tax_percent, payment_method, payment_status, order_status, created_at, updated_at)
+                VALUES (:transaction_type, :customer_name, :company, :game_name, :transaction_date, :quantity, :unit_price, :discount_percent, :tax_percent, :payment_method, :payment_status, :order_status, NOW(), NOW())";
 
-    $stmt = $this->conn->prepare($sql);
-    
-    // 2. Removed the bindValue(':transaction_id', ...) line entirely
-    $stmt->bindValue(':transaction_type', $data['transaction_type'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':customer_name', $data['customer_name'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':company', $data['company'] ?? $data['Company'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':game_name', $data['game_name'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':transaction_date', $data['transaction_date'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':quantity', $data['quantity'] ?? null, PDO::PARAM_INT);
-    $stmt->bindValue(':unit_price', $data['unit_price'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':discount_percent', $data['discount_percent'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':tax_percent', $data['tax_percent'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':payment_method', $data['payment_method'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':payment_status', $data['payment_status'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':order_status', $data['order_status'] ?? null, PDO::PARAM_STR);
+        $stmt = $this->conn->prepare($sql);
+        
+        $stmt->bindValue(':transaction_type', $data['transaction_type'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':customer_name', $data['customer_name'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':company', $data['company'] ?? $data['Company'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':game_name', $data['game_name'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':transaction_date', $data['transaction_date'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':quantity', $data['quantity'] ?? null, PDO::PARAM_INT);
+        $stmt->bindValue(':unit_price', $data['unit_price'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':discount_percent', $data['discount_percent'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':tax_percent', $data['tax_percent'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':payment_method', $data['payment_method'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':payment_status', $data['payment_status'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':order_status', $data['order_status'] ?? null, PDO::PARAM_STR);
 
-    $stmt->execute();
+        $stmt->execute();
+    }
+     
+    public function update(int $id, array $data): bool
+    {
+        $sql = "UPDATE transactions SET 
+                    transaction_type = :transaction_type, 
+                    customer_name = :customer_name, 
+                    company = :company, 
+                    game_name = :game_name, 
+                    transaction_date = :transaction_date, 
+                    quantity = :quantity, 
+                    unit_price = :unit_price, 
+                    discount_percent = :discount_percent, 
+                    tax_percent = :tax_percent, 
+                    payment_method = :payment_method, 
+                    payment_status = :payment_status, 
+                    order_status = :order_status, 
+                    updated_at = NOW() 
+                WHERE transaction_id = :id";
 
-}
- 
+        $stmt = $this->conn->prepare($sql);
+        
+        $stmt->bindValue(':transaction_type', $data['transaction_type'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':customer_name', $data['customer_name'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':company', $data['company'] ?? $data['Company'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':game_name', $data['game_name'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':transaction_date', $data['transaction_date'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':quantity', $data['quantity'] ?? null, PDO::PARAM_INT);
+        $stmt->bindValue(':unit_price', $data['unit_price'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':discount_percent', $data['discount_percent'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':tax_percent', $data['tax_percent'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':payment_method', $data['payment_method'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':payment_status', $data['payment_status'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':order_status', $data['order_status'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
 
-public function update(int $id, array $data): bool
-{
-    // 1. Removed 'transaction_id = :transaction_id' from the SET clause
-    $sql = "UPDATE transactions SET 
-                transaction_type = :transaction_type, 
-                customer_name = :customer_name, 
-                company = :company, 
-                game_name = :game_name, 
-                transaction_date = :transaction_date, 
-                quantity = :quantity, 
-                unit_price = :unit_price, 
-                discount_percent = :discount_percent, 
-                tax_percent = :tax_percent, 
-                payment_method = :payment_method, 
-                payment_status = :payment_status, 
-                order_status = :order_status, 
-                updated_at = NOW() 
-            WHERE transaction_id = :id";
+        return $stmt->execute();
+    }
 
-    $stmt = $this->conn->prepare($sql);
-    
-    // 2. Removed the unnecessary bindValue for :transaction_id
-    $stmt->bindValue(':transaction_type', $data['transaction_type'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':customer_name', $data['customer_name'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':company', $data['company'] ?? $data['Company'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':game_name', $data['game_name'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':transaction_date', $data['transaction_date'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':quantity', $data['quantity'] ?? null, PDO::PARAM_INT);
-    $stmt->bindValue(':unit_price', $data['unit_price'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':discount_percent', $data['discount_percent'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':tax_percent', $data['tax_percent'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':payment_method', $data['payment_method'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':payment_status', $data['payment_status'] ?? null, PDO::PARAM_STR);
-    $stmt->bindValue(':order_status', $data['order_status'] ?? null, PDO::PARAM_STR);
-    
-    // 3. This ':id' matches your WHERE clause
-    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    public function search(string $searchterm, string $sort = 'transaction_id', string $order = 'DESC', int $page = 1, int $perPage = 10): array
+    {
+        $allowedSorts = ['transaction_id', 'transaction_type', 'customer_name', 'company', 'game_name', 'transaction_date', 'quantity', 'unit_price', 'discount_percent', 'tax_percent', 'payment_method', 'payment_status', 'order_status', 'created_at', 'updated_at'];
+        $allowedOrders = ['ASC', 'DESC'];
+        if (!in_array($sort, $allowedSorts)) $sort = 'transaction_id';
+        if (!in_array($order, $allowedOrders)) $order = 'DESC';
 
-    return $stmt->execute();
-}
+        $offset = max(0, ($page - 1) * $perPage);
+
+        $sql = "SELECT transaction_id, transaction_type, customer_name, company, game_name, transaction_date, quantity, unit_price, discount_percent, tax_percent, payment_method, payment_status, order_status, created_at, updated_at
+                FROM transactions
+                WHERE transaction_id LIKE :search
+                   OR transaction_type LIKE :search
+                   OR customer_name LIKE :search
+                   OR company LIKE :search
+                   OR game_name LIKE :search
+                   OR transaction_date LIKE :search
+                   OR quantity LIKE :search
+                   OR unit_price LIKE :search
+                   OR discount_percent LIKE :search
+                   OR tax_percent LIKE :search
+                   OR payment_method LIKE :search
+                   OR payment_status LIKE :search
+                   OR order_status LIKE :search
+                ORDER BY $sort $order
+                LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':search', '%' . $searchterm . '%', PDO::PARAM_STR);
+        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countSearch(string $searchterm): int
+    {
+        $sql = "SELECT COUNT(*) FROM transactions
+                WHERE transaction_id LIKE :search
+                   OR transaction_type LIKE :search
+                   OR customer_name LIKE :search
+                   OR company LIKE :search
+                   OR game_name LIKE :search
+                   OR transaction_date LIKE :search
+                   OR quantity LIKE :search
+                   OR unit_price LIKE :search
+                   OR discount_percent LIKE :search
+                   OR tax_percent LIKE :search
+                   OR payment_method LIKE :search
+                   OR payment_status LIKE :search
+                   OR order_status LIKE :search";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':search', '%' . $searchterm . '%', PDO::PARAM_STR);
+        $stmt->execute();
+        return (int) $stmt->fetchColumn();
+    }
 }
