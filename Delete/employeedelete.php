@@ -4,9 +4,9 @@
 
 require_once __DIR__ . '/../Models/config.php';
 global $conn;
-// Check if employee_id parameter exists
-if (isset($_GET['employee_id'])) {
-    $employee_id = $_GET['employee_id'];
+// Check if employee_id parameter exists (accept both id and employee_id for compatibility)
+$employee_id = $_GET['employee_id'] ?? $_GET['id'] ?? null;
+if ($employee_id !== null) {
 
 // SQL Delete statement to delete employee from database
     $sql = "DELETE FROM employees WHERE employee_id = :employee_id";

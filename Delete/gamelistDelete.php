@@ -10,9 +10,22 @@ if ($gameId !== null) {
 
 		$deleteTransactions = "DELETE FROM transactions WHERE game_id = :game_id";
 		$stmt = $conn->prepare($deleteTransactions);
-		$stmt->execute([
-			":game_id" => $gameId
-		]);
+		try {
+			$stmt->execute([
+				":game_id" => $gameId
+			]);
+		} catch (PDOException $e) {
+			// If the transactions table uses a different column name (e.g. game_name),
+			// attempt a fallback delete. Detect SQLSTATE 42S22 = column not found.
+			if ($e->getCode() === '42S22') {
+				$fallback = $conn->prepare("DELETE FROM transactions WHERE game_name = :game_id");
+				$fallback->execute([
+					":game_id" => $gameId
+				]);
+			} else {
+				throw $e;
+			}
+		}
 
 		$deleteGame = "DELETE FROM games WHERE game_id = :game_id";
 		$stmt = $conn->prepare($deleteGame);
