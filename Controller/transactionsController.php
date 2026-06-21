@@ -1,5 +1,5 @@
 <?php
-
+ 
 require_once __DIR__ . '/../Models/transactionsget.php';
 
 class TransactionsController
@@ -11,26 +11,29 @@ class TransactionsController
         $this->transaction = new Transaction();
     }
 
-    public function index(string $sort = 'transaction_id', string $order = 'DESC'): void
-    {
-        $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
-        $perPage = 10;
+        public function index(): void
+        {
+            $Searchterm = '';
+            $sort = $_GET['sort'] ?? 'newest';
+            $sort = ($sort === 'oldest') ? 'oldest' : 'newest';
+            $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+            $perPage = 5;
 
-        if (isset($_GET['search']) && trim($_GET['search']) !== '') {
-            $searchterm = trim($_GET['search']);
-            $totalCount = $this->transaction->countSearch($searchterm);
-            $totalPages = max(1, (int) ceil($totalCount / $perPage));
-            $currentPage = min($page, $totalPages);
-            $transactionresults = $this->transaction->search($searchterm, $sort, $order, $currentPage, $perPage);
-        } else {
-            $totalCount = $this->transaction->countAll();
-            $totalPages = max(1, (int) ceil($totalCount / $perPage));
-            $currentPage = min($page, $totalPages);
-            $transactionresults = $this->transaction->all($sort, $order, $currentPage, $perPage);
+            if (isset($_GET['search']) && trim($_GET['search']) !== '') {
+                $Searchterm = trim($_GET['search']);
+                $totalCount = $this->transaction->countSearch($Searchterm);
+                $totalPages = max(1, (int) ceil($totalCount / $perPage));
+                $currentPage = min($page, $totalPages);
+                $transactionresults = $this->transaction->search($Searchterm, $currentPage, $perPage);
+            } else {
+                $totalCount = $this->transaction->countAll();
+                $totalPages = max(1, (int) ceil($totalCount / $perPage));
+                $currentPage = min($page, $totalPages);
+                $transactionresults = $this->transaction->all($sort, $currentPage, $perPage);
+            }
+
+            require dirname(__DIR__) . '/Views/transactionsView.php';
         }
-
-        require __DIR__ . '/../views/transactionsView.php';
-    }
   
     public function store(): void
     {

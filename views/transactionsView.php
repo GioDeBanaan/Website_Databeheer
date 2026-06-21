@@ -37,9 +37,25 @@ if (!isset($transactionresults)) {
             </ul>
         </header>
 
-         <div class="container mt-4 d-flex justify-content-center">
-            <a href="../Create/transactionsCreate.php" class="btn btn-success mb-3">Add new transaction</a>
-            <a href="../Controller/transactionsApi.php" class="btn btn-secondary mb-3">Export to PDF</a>
+
+        <div class="container mt-4 mb-4">
+            <div class="row">
+                <div class="col-md-8">
+                    <form method="GET" action="transactions.php">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control" placeholder="Search transactions..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+                            <input type="hidden" name="sort" value="<?= htmlspecialchars($_GET['sort'] ?? 'newest') ?>">
+                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="transactions.php?sort=newest<?= $searchQuery ?>" class="btn btn-outline-secondary <?= ($sortParam === 'newest') ? 'active' : '' ?>">Newest</a>
+                    <a href="transactions.php?sort=oldest<?= $searchQuery ?>" class="btn btn-outline-secondary <?= ($sortParam === 'oldest') ? 'active' : '' ?>">Oldest</a>
+                    <a href="../Create/transactionsCreate.php" class="btn btn-success mb-3">Add new transaction</a>
+                    <a href="../Controller/transactionsApi.php" class="btn btn-secondary mb-3">Export to PDF</a>
+                </div>
+            </div>
         </div>
 
             <table class="table table-bordered">
