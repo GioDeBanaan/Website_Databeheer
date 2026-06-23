@@ -1,9 +1,12 @@
 <?php
 // 1. Include your Transaction class file
 require_once __DIR__ . "/../Controller/transactionsController.php"; // Adjust path if needed
-
+require_once __DIR__ . "/../Models/config.php";
 $transactionObj = new Transaction();
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+// Load games for the dropdown
+$games = $conn->query("SELECT game_id, title FROM games ORDER BY title ASC")->fetchAll(PDO::FETCH_ASSOC);
 
 // Create a variable to track if we just saved successfully
 $saveSuccess = false; 
@@ -13,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'transaction_type' => $_POST['transaction_type'] ?? null,
         'customer_name'    => $_POST['customer_name'] ?? null,
         'company'          => $_POST['company'] ?? null,
-        'game_name'        => $_POST['game_name'] ?? null,
+        'game_id'          => $_POST['game_id'] ?? null,
         'transaction_date' => $_POST['transaction_date'] ?? null,
         'quantity'         => $_POST['quantity'] ?? null,
         'unit_price'       => $_POST['unit_price'] ?? null,
@@ -81,7 +84,14 @@ if (!$transaction) {
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Game name:</label>
-                <input type="text" class="form-control" name="game_name" placeholder="Enter game name" required value="<?= htmlspecialchars($transaction['game_name'] ?? '') ?>">
+                    <select class="form-control" name="game_id" required>
+                        <option value="">Select a game</option>
+                        <?php foreach ($games as $game): ?>
+                            <option value="<?= htmlspecialchars($game['game_id']) ?>" <?= (int)($transaction['game_id'] ?? 0) === (int)$game['game_id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($game['title']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
             </div>
 
             <div class="mb-3">

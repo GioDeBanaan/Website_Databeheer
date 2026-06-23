@@ -11,7 +11,8 @@ $sql = "SELECT
             t.transaction_type, 
             t.customer_name, 
             t.company, 
-            t.game_name, 
+            t.game_id, 
+            g.title AS game_name, 
             t.transaction_date, 
             t.quantity, 
             t.unit_price, 
@@ -24,7 +25,7 @@ $sql = "SELECT
             t.updated_at 
         FROM transactions t 
         LEFT JOIN suppliers s ON t.company = s.supplier_id 
-        LEFT JOIN games g ON t.game_name = g.game_id 
+        LEFT JOIN games g ON t.game_id = g.game_id 
         ORDER BY t.transaction_id DESC";
  
 $transactionresult = $conn->query($sql);

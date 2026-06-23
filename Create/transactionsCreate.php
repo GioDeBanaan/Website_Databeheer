@@ -8,8 +8,11 @@
         <h1>Add new transaction</h1>
         </div>
         <form method="post" action="../Pages/transactions.php?action=store">
-            <?php include __DIR__ . "/../Models/config.php"; 
-            include __DIR__ . "/transactionsForm.php"; ?>
+            <?php
+            include __DIR__ . "/../Models/config.php";
+            $games = $conn->query("SELECT game_id, title FROM games ORDER BY title ASC")->fetchAll(PDO::FETCH_ASSOC);
+            include __DIR__ . "/transactionsForm.php";
+            ?>
     </form>
     </body>
 </html>

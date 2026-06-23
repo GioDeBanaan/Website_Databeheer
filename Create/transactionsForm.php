@@ -45,7 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Game name:</label>
-                <input type="text" class="form-control" name="game_name" placeholder="Enter game name" required value="<?= htmlspecialchars($transaction['game_name'] ?? '') ?>">
+                    <select class="form-control" name="game_id" required> <option value="">Select a game</option>
+                        <?php if (!empty($games)): ?>
+                            <?php foreach ($games as $game): ?>
+                                <option value="<?= htmlspecialchars($game['game_id']) ?>" <?= (int)($transaction['game_id'] ?? 0) === (int)$game['game_id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($game['title']) ?> </option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                    </select>
             </div>
 
             <div class="mb-3">

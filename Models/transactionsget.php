@@ -21,7 +21,7 @@ class Transaction
         return (int) $stmt->fetchColumn();
     }
 
-    // Gefikst: Argumenten toegevoegd zodat sortering en paginering (LIMIT/OFFSET) werken!
+    // Gefikst: Argumenten toegevoegd zodat sortering en paginering (LIMIT/OFFSET) werken
     public function all(string $sort = 'transaction_id', string $order = 'DESC', int $page = 1, int $perPage = 10): array
     {
         $allowedSorts = ['transaction_id', 'transaction_type', 'customer_name', 'company', 'game_name', 'transaction_date', 'quantity', 'unit_price', 'discount_percent', 'tax_percent', 'payment_method', 'payment_status', 'order_status', 'created_at', 'updated_at'];
@@ -32,22 +32,24 @@ class Transaction
         $offset = max(0, ($page - 1) * $perPage);
 
         $sql = "SELECT 
-            transaction_id,
-            transaction_type,
-            customer_name,
-            company,
-            game_name,
-            transaction_date,
-            quantity,
-            unit_price,
-            discount_percent,
-            tax_percent,
-            payment_method,
-            payment_status,
-            order_status,
-            created_at,
-            updated_at
-        FROM transactions
+            t.transaction_id,
+            t.transaction_type,
+            t.customer_name,
+            t.company,
+            t.game_id,
+            g.title AS game_name,
+            t.transaction_date,
+            t.quantity,
+            t.unit_price,
+            t.discount_percent,
+            t.tax_percent,
+            t.payment_method,
+            t.payment_status,
+            t.order_status,
+            t.created_at,
+            t.updated_at
+        FROM transactions t
+        LEFT JOIN games g ON t.game_id = g.game_id
         ORDER BY $sort $order
         LIMIT :limit OFFSET :offset";
                 
@@ -66,7 +68,8 @@ class Transaction
                     t.transaction_type, 
                     t.customer_name, 
                     t.company, 
-                    t.game_name, 
+                    t.game_id,
+                    g.title AS game_name, 
                     t.transaction_date, 
                     t.quantity, 
                     t.unit_price, 
@@ -79,7 +82,7 @@ class Transaction
                     t.updated_at 
                 FROM transactions t
                 LEFT JOIN suppliers s ON t.company = s.supplier_id
-                LEFT JOIN games g ON t.game_name = g.game_id
+                LEFT JOIN games g ON t.game_id = g.game_id
                 WHERE t.transaction_id = :id";
                 
         $stmt = $this->conn->prepare($sql);
@@ -92,15 +95,15 @@ class Transaction
 
     public function create(array $data): void
     {
-        $sql = "INSERT INTO transactions (transaction_type, customer_name, company, game_name, transaction_date, quantity, unit_price, discount_percent, tax_percent, payment_method, payment_status, order_status, created_at, updated_at)
-                VALUES (:transaction_type, :customer_name, :company, :game_name, :transaction_date, :quantity, :unit_price, :discount_percent, :tax_percent, :payment_method, :payment_status, :order_status, NOW(), NOW())";
+        $sql = "INSERT INTO transactions (transaction_type, customer_name, company, game_id, transaction_date, quantity, unit_price, discount_percent, tax_percent, payment_method, payment_status, order_status, created_at, updated_at)
+                VALUES (:transaction_type, :customer_name, :company, :game_id, :transaction_date, :quantity, :unit_price, :discount_percent, :tax_percent, :payment_method, :payment_status, :order_status, NOW(), NOW())";
 
         $stmt = $this->conn->prepare($sql);
         
         $stmt->bindValue(':transaction_type', $data['transaction_type'] ?? null, PDO::PARAM_STR);
         $stmt->bindValue(':customer_name', $data['customer_name'] ?? null, PDO::PARAM_STR);
         $stmt->bindValue(':company', $data['company'] ?? $data['Company'] ?? null, PDO::PARAM_STR);
-        $stmt->bindValue(':game_name', $data['game_name'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':game_id', $data['game_id'] ?? null, PDO::PARAM_INT);
         $stmt->bindValue(':transaction_date', $data['transaction_date'] ?? null, PDO::PARAM_STR);
         $stmt->bindValue(':quantity', $data['quantity'] ?? null, PDO::PARAM_INT);
         $stmt->bindValue(':unit_price', $data['unit_price'] ?? null, PDO::PARAM_STR);
@@ -119,7 +122,7 @@ class Transaction
                     transaction_type = :transaction_type, 
                     customer_name = :customer_name, 
                     company = :company, 
-                    game_name = :game_name, 
+                    game_id = :game_id, 
                     transaction_date = :transaction_date, 
                     quantity = :quantity, 
                     unit_price = :unit_price, 
@@ -136,7 +139,7 @@ class Transaction
         $stmt->bindValue(':transaction_type', $data['transaction_type'] ?? null, PDO::PARAM_STR);
         $stmt->bindValue(':customer_name', $data['customer_name'] ?? null, PDO::PARAM_STR);
         $stmt->bindValue(':company', $data['company'] ?? $data['Company'] ?? null, PDO::PARAM_STR);
-        $stmt->bindValue(':game_name', $data['game_name'] ?? null, PDO::PARAM_STR);
+        $stmt->bindValue(':game_id', $data['game_id'] ?? null, PDO::PARAM_INT);
         $stmt->bindValue(':transaction_date', $data['transaction_date'] ?? null, PDO::PARAM_STR);
         $stmt->bindValue(':quantity', $data['quantity'] ?? null, PDO::PARAM_INT);
         $stmt->bindValue(':unit_price', $data['unit_price'] ?? null, PDO::PARAM_STR);
@@ -159,21 +162,22 @@ class Transaction
 
         $offset = max(0, ($page - 1) * $perPage);
 
-        $sql = "SELECT transaction_id, transaction_type, customer_name, company, game_name, transaction_date, quantity, unit_price, discount_percent, tax_percent, payment_method, payment_status, order_status, created_at, updated_at
-                FROM transactions
-                WHERE transaction_id LIKE :search
-                   OR transaction_type LIKE :search
-                   OR customer_name LIKE :search
-                   OR company LIKE :search
-                   OR game_name LIKE :search
-                   OR transaction_date LIKE :search
-                   OR quantity LIKE :search
-                   OR unit_price LIKE :search
-                   OR discount_percent LIKE :search
-                   OR tax_percent LIKE :search
-                   OR payment_method LIKE :search
-                   OR payment_status LIKE :search
-                   OR order_status LIKE :search
+        $sql = "SELECT t.transaction_id, t.transaction_type, t.customer_name, t.company, t.game_id, g.title AS game_name, t.transaction_date, t.quantity, t.unit_price, t.discount_percent, t.tax_percent, t.payment_method, t.payment_status, t.order_status, t.created_at, t.updated_at
+                FROM transactions t
+                LEFT JOIN games g ON t.game_id = g.game_id
+                WHERE t.transaction_id LIKE :search
+                   OR t.transaction_type LIKE :search
+                   OR t.customer_name LIKE :search
+                   OR t.company LIKE :search
+                   OR g.title LIKE :search
+                   OR t.transaction_date LIKE :search
+                   OR t.quantity LIKE :search
+                   OR t.unit_price LIKE :search
+                   OR t.discount_percent LIKE :search
+                   OR t.tax_percent LIKE :search
+                   OR t.payment_method LIKE :search
+                   OR t.payment_status LIKE :search
+                   OR t.order_status LIKE :search
                 ORDER BY $sort $order
                 LIMIT :limit OFFSET :offset";
 
@@ -187,20 +191,21 @@ class Transaction
 
     public function countSearch(string $searchterm): int
     {
-        $sql = "SELECT COUNT(*) FROM transactions
-                WHERE transaction_id LIKE :search
-                   OR transaction_type LIKE :search
-                   OR customer_name LIKE :search
-                   OR company LIKE :search
-                   OR game_name LIKE :search
-                   OR transaction_date LIKE :search
-                   OR quantity LIKE :search
-                   OR unit_price LIKE :search
-                   OR discount_percent LIKE :search
-                   OR tax_percent LIKE :search
-                   OR payment_method LIKE :search
-                   OR payment_status LIKE :search
-                   OR order_status LIKE :search";
+        $sql = "SELECT COUNT(*) FROM transactions t
+                LEFT JOIN games g ON t.game_id = g.game_id
+                WHERE t.transaction_id LIKE :search
+                   OR t.transaction_type LIKE :search
+                   OR t.customer_name LIKE :search
+                   OR t.company LIKE :search
+                   OR g.title LIKE :search
+                   OR t.transaction_date LIKE :search
+                   OR t.quantity LIKE :search
+                   OR t.unit_price LIKE :search
+                   OR t.discount_percent LIKE :search
+                   OR t.tax_percent LIKE :search
+                   OR t.payment_method LIKE :search
+                   OR t.payment_status LIKE :search
+                   OR t.order_status LIKE :search";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(':search', '%' . $searchterm . '%', PDO::PARAM_STR);

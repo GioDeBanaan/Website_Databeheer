@@ -43,7 +43,8 @@ class CustomersController
     public function store(): void
     {
         $this->customer->create($this->getFormData());
-        header('Location: customers.php');
+        // Redirect to newest first page so the newly created customer is visible immediately
+        header('Location: customers.php?sort=newest&page=1');
         exit();
     }
 

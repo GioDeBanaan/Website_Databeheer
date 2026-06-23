@@ -14,25 +14,38 @@ class TransactionsController
         public function index(): void
         {
             $Searchterm = '';
-            $sort = $_GET['sort'] ?? 'newest';
-            $sort = ($sort === 'oldest') ? 'oldest' : 'newest';
+
+            // Keep the user's chosen sort (newest|oldest) for the view
+            $sortParam = $_GET['sort'] ?? 'newest';
+            $sortParam = ($sortParam === 'oldest') ? 'oldest' : 'newest';
+
+            // Map to DB column and order
+            $sortColumn = 'created_at';
+            $order = ($sortParam === 'oldest') ? 'ASC' : 'DESC';
+
             $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
-            $perPage = 5;
+            $perPage = 10;
 
             if (isset($_GET['search']) && trim($_GET['search']) !== '') {
                 $Searchterm = trim($_GET['search']);
                 $totalCount = $this->transaction->countSearch($Searchterm);
                 $totalPages = max(1, (int) ceil($totalCount / $perPage));
                 $currentPage = min($page, $totalPages);
-                $transactionresults = $this->transaction->search($Searchterm, $currentPage, $perPage);
+                $transactionresults = $this->transaction->search($Searchterm, $sortColumn, $order, $currentPage, $perPage);
             } else {
                 $totalCount = $this->transaction->countAll();
                 $totalPages = max(1, (int) ceil($totalCount / $perPage));
                 $currentPage = min($page, $totalPages);
-                $transactionresults = $this->transaction->all($sort, $currentPage, $perPage);
+                $transactionresults = $this->transaction->all($sortColumn, $order, $currentPage, $perPage);
             }
 
-            require dirname(__DIR__) . '/Views/transactionsView.php';
+            // expose variables expected by the view
+            $totalPages = $totalPages ?? 1;
+            $currentPage = $currentPage ?? 1;
+            $sortParam = $sortParam;
+            $currentSort = $sortParam;
+
+            require dirname(__DIR__) . '/views/transactionsView.php';
         }
   
     public function store(): void
@@ -54,13 +67,11 @@ class TransactionsController
             die();
         }
 
-        // Tip: (int) is hier weggehaald bij customer_name, company en game_name 
-        // omdat dit tekstvelden (varchar) zijn in je database!
         return [
             'transaction_type' => $_POST['transaction_type'] ?? null,
             'customer_name'    => !empty($_POST['customer_name']) ? trim($_POST['customer_name']) : null,
             'company'          => !empty($_POST['company']) ? trim($_POST['company']) : null,
-            'game_name'        => !empty($_POST['game_name']) ? trim($_POST['game_name']) : null,
+            'game_id'          => !empty($_POST['game_id']) ? (int)$_POST['game_id'] : null,
             'transaction_date' => $_POST['transaction_date'] ?? null,
             'quantity'         => !empty($_POST['quantity']) ? (int)$_POST['quantity'] : 0,
             'unit_price'       => $_POST['unit_price'] ?? '0.00',
