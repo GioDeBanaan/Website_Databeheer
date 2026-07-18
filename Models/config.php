@@ -1,0 +1,68 @@
+<?php
+// 08/06/2026 made by Kai Hiraki
+
+    $host = "panel.nietmeerleuk.me";
+    $dbname = "database-school";
+    $username = "periode4";
+    $password = "WachtWoord123!!";
+    try {
+        $conn = new PDO(
+            "mysql:host=$host;dbname=$dbname;charset=utf8",
+            $username,
+            $password
+        );
+
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    } catch (PDOException $e) {
+
+        die("Databaseverbinding mislukt: " . $e->getMessage());
+    }
+
+    // Ik heb hier AS gebruikt omdat ik hier twee names heb eentje voor de genre en de ander voor het platform
+    //ik heb hier join gebruik omdat ik van meerdere databases dingen moet halen en op eentje mergen
+
+    $sql = "SELECT employee_id,  first_name, last_name, email, phone, job_title, department, hire_date, salary, birth_date, street, house_number, postal_code, city, country, contract_type, employment_status, emergency_contact_name, emergency_contact_phone, notes, created_at, updated_at FROM employees ORDER BY employee_id DESC";
+
+    $employeeresult = $conn->query($sql);
+
+    $sql = "SELECT genre_id, name FROM genres ORDER BY genre_id DESC";
+
+    $genreresult = $conn->query($sql);
+
+    $sql = "SELECT platform_id, name FROM platforms ORDER BY platform_id DESC";
+
+    $platformresult = $conn->query($sql);
+
+    $sql = "SELECT  supplier_id, supplier_code, company_name, contact_person, email, phone, website, chamber_of_commerce_number, vat_number, street, house_number, postal_code, city, country, bank_account, delivery_time_days, supplier_rating, is_active, notes, created_at, updated_at FROM suppliers ORDER BY supplier_id DESC";
+
+    $supplierresult = $conn->query($sql);
+    // concat is als je twee of meer dingen in een wil hebben zoals hier wil ik voor en achternaam samen dit is effe een reminder voor kai
+
+$sql = "SELECT  supplier_id, supplier_code, company_name, contact_person, email, phone, website, chamber_of_commerce_number, vat_number, street, house_number, postal_code, city, country, bank_account, delivery_time_days, supplier_rating, is_active, notes, created_at, updated_at FROM suppliers ORDER BY supplier_id DESC";
+
+    $supplierresult = $conn->query($sql);
+// Fully corrected transaction query: matches customer_name, company, and game_name
+    $sql = "SELECT 
+                t.transaction_id,  
+                t.transaction_type, 
+                t.customer_name AS customer_name, 
+                s.company_name AS company_name, 
+                g.title AS game_name, 
+                t.transaction_date, 
+                t.quantity, 
+                t.unit_price, 
+                t.discount_percent, 
+                t.tax_percent, 
+                t.payment_method, 
+                t.payment_status, 
+                t.order_status, 
+                t.created_at, 
+                t.updated_at 
+            FROM transactions t 
+            LEFT JOIN suppliers s ON t.company = s.supplier_id 
+            LEFT JOIN games g ON t.game_id = g.game_id 
+            ORDER BY t.transaction_id DESC";
+
+    $transactionresult = $conn->query($sql);
+    ?>

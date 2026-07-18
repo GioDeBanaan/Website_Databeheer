@@ -1,0 +1,205 @@
+<!-- 08/06/2026 made by: Gio-->
+
+<?php
+// View expects employee results provided by the controller
+if (!isset($employeeresult)) {
+    die("employeeresult not passed to view");
+}
+
+$searchQuery = isset($_GET['search']) && trim($_GET['search']) !== '' ? '&search=' . urlencode(trim($_GET['search'])) : '';
+$sortParam = htmlspecialchars($_GET['sort'] ?? 'newest');
+$currentPage = $currentPage ?? 1;
+$totalPages = $totalPages ?? 1;
+?>
+<html>
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            .address-link {
+                color: #0d6efd;
+                text-decoration: none;
+            }
+            .address-link:hover {
+                text-decoration: underline;
+            }
+        </style>
+        <title>Employees</title>
+    </head>
+    <body>
+        <header class="navbar navbar-expand-lg navbar-light bg-light justify-content-center">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a href="../index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="gamelist.php" class="nav-link">Game list</a>
+                </li>
+                <li class="nav-item">
+                    <a href="customers.php" class="nav-link">Customers</a>
+                </li>
+                <li class="nav-item">
+                    <a href="employee.php" class="navbar-brand">Employees</a>
+                </li>
+                <li class="nav-item">
+                    <a href="suppliers.php" class="nav-link">Suppliers</a>
+                </li>
+                <li class="nav-item">
+                    <a href="transactions.php" class="nav-link">Transactions</a>
+                </li>
+            </ul>
+        </header>
+
+        <div class="container mt-4 mb-4">
+            <div class="row">
+                <div class="col-md-8">
+                    <form method="GET" action="employee.php">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control" placeholder="Search employees..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+                            <input type="hidden" name="sort" value="<?= htmlspecialchars($_GET['sort'] ?? 'newest') ?>">
+                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="employee.php?sort=newest<?= $searchQuery ?>" class="btn btn-outline-secondary <?= ($sortParam === 'newest') ? 'active' : '' ?>">Newest</a>
+                    <a href="employee.php?sort=oldest<?= $searchQuery ?>" class="btn btn-outline-secondary <?= ($sortParam === 'oldest') ? 'active' : '' ?>">Oldest</a>
+                    <a href="employee.php?action=create" class="btn btn-success">Add new employee</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employee list table -->
+        <table class="table table-bordered">
+            <tr>
+                <th>Name</th>
+                <th>Contact</th>
+                <th>Job title</th>
+                <th>Hire date</th>
+                <th>Salary</th>
+                <th>Birth date</th>
+                <th>Address</th>
+                <th>Contract type</th>
+                <th>Employment status</th>
+                <th>Emergency contact</th>
+                <th>Notes</th>
+                <th>Created at</th>
+                <th>Last updated at</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            <?php foreach ($employeeresult as $row): ?>
+                <tr>
+                    <td><?= htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) ?></td>
+                    <td><?= htmlspecialchars($row['email']) ?><br><?= htmlspecialchars($row['phone']) ?></td>
+                    <td><?= htmlspecialchars($row['job_title']) ?><br><small class="text-muted"><?= htmlspecialchars($row['department']) ?></small></td>
+                    <td class="text-nowrap"><?= htmlspecialchars($row['hire_date']) ?></td>
+                    <td>€<?= htmlspecialchars($row['salary']) ?></td>
+                    <td class="text-nowrap"><?= htmlspecialchars($row['birth_date']) ?></td>
+                    <?php $mapQueryRaw = $row['street'] . ' ' . $row['house_number'] . ', ' . $row['postal_code'] . ' ' . $row['city']; ?>
+                    <td class="text-nowrap"><a href="#" class="address-link" data-query="<?= htmlspecialchars($mapQueryRaw) ?>"><?= htmlspecialchars($row['street'] . ' ' . $row['house_number']) ?><br><?= htmlspecialchars($row['postal_code']) ?><br><small class="text-muted"><?= htmlspecialchars($row['city']) ?></small></a></td>
+                    <td><?= htmlspecialchars($row['contract_type']) ?></td>
+                    <td><?= htmlspecialchars($row['employment_status']) ?></td>
+                    <td class="text-nowrap"><?= htmlspecialchars($row['emergency_contact_name']) ?><br><?= htmlspecialchars($row['emergency_contact_phone']) ?></td>
+                    <td><?= htmlspecialchars($row['notes']) ?></td>
+                    <td><?= htmlspecialchars($row['created_at']) ?></td>
+                    <td><?= htmlspecialchars($row['updated_at']) ?></td>
+                    <td><a href="employee.php?action=edit&id=<?= $row['employee_id'] ?>" class="btn btn-primary">Edit</a></td>
+                    <td><button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteData(<?= $row['employee_id'] ?>, '<?= htmlspecialchars(addslashes($row['first_name'] . ' ' . $row['last_name'])) ?>', '<?= htmlspecialchars(addslashes($row['email'] ?? '')) ?>')">Delete</button></td>
+                </tr>
+    <?php endforeach; ?>
+</table>
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="deleteImage" src="../mqdefault.jpg" alt="Game Image" class="img-fluid mb-3">
+                    <p>Are you sure you want to delete <strong id="deleteTitle"></strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let deleteEmployeeId = null;
+
+        function setDeleteData(employeeId, employeeTitle) {
+            deleteEmployeeId = employeeId;
+            document.getElementById('deleteTitle').textContent = employeeTitle;
+        }
+
+        function confirmDelete() {
+            if (deleteEmployeeId) {
+                window.location.href = '../Delete/employeeDelete.php?id=' + deleteEmployeeId;
+            }
+        }
+    </script>
+
+        <!-- Pagination -->
+        <?php if ($totalPages > 1): ?>
+            <nav aria-label="Employee list pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
+                        <a class="page-link" href="employee.php?page=<?= max(1, $currentPage - 1) ?>&sort=<?= $sortParam ?><?= $searchQuery ?>">Previous</a>
+                    </li>
+                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                        <li class="page-item <?= $i === $currentPage ? 'active' : '' ?>">
+                            <a class="page-link" href="employee.php?page=<?= $i ?>&sort=<?= $sortParam ?><?= $searchQuery ?>"><?= $i ?></a>
+                        </li>
+                    <?php endfor; ?>
+                    <li class="page-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
+                        <a class="page-link" href="employee.php?page=<?= min($totalPages, $currentPage + 1) ?>&sort=<?= $sortParam ?><?= $searchQuery ?>">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        <?php endif; ?>
+
+        <!-- MAP LOCATION -->
+
+        <div class="modal fade" id="mapModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Employee Location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <div id="map" style="height:500px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+    </body>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var mapModalEl = document.getElementById('mapModal');
+            var mapContainer = document.getElementById('map');
+            if (!mapModalEl || !mapContainer) return;
+             var mapModal = new bootstrap.Modal(mapModalEl);
+
+            document.querySelectorAll('.address-link').forEach(function(el){
+            el.addEventListener('click', function(e){
+            e.preventDefault();
+            var q = el.getAttribute('data-query') || '';
+            var src = 'https://www.google.com/maps?q=' + encodeURIComponent(q) + '&output=embed';
+            mapContainer.innerHTML = '<iframe src="' + src + '" width="100%" height="100%" style="border:0; min-height:500px;" allowfullscreen="" loading="lazy"></iframe>';
+            mapModal.show();
+            });
+                });
+
+            mapModalEl.addEventListener('hidden.bs.modal', function () {
+            mapContainer.innerHTML = '';
+                });
+            });
+    </script>
+</html>
